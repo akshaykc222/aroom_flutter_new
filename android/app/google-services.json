@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "770682582470",
+    "firebase_url": "https://fresh-1b966-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "fresh-1b966",
+    "storage_bucket": "fresh-1b966.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:770682582470:android:9dcb3bb1c9b0eb8f2f6ec7",
+        "android_client_info": {
+          "package_name": "com.aroom.aroom"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "770682582470-fq991n65rdd6vdkg9penbgdffbueqvcp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCmRfeLZqYPRZUp_dZB69_dWZrpeldEksU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "770682582470-fq991n65rdd6vdkg9penbgdffbueqvcp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
