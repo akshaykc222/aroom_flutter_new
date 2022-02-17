@@ -52,7 +52,7 @@ class _AdminMenuState extends State<AdminMenu> {
         Navigator.pushNamed(context, customers);
       }),
       MenuCard(icon: Icons.chat_bubble_outline, title: "Enquiry", function: (){
-        Navigator.pushNamed(context, customers);
+        Navigator.pushNamed(context, enquiry);
       }),
     ];
     super.initState();

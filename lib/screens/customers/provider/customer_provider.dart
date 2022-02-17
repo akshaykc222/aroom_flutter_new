@@ -15,6 +15,26 @@ class CustomerProvider with ChangeNotifier {
   List<CustomerModel> customerList = [];
   List<CustomerModel> tempList = [];
 
+  String selectedLeadSource="Our marketing executives";
+  List<String> leadSource =[
+    "Our marketing executives",
+    "Social networks",
+
+  ];
+  String selectedLeadStatus="Attempt to contact";
+  List<String> leadStatus =[
+    "Attempt to contact",
+    "Contacted",
+    "Not contacted",
+    "Qualified",
+    "Pre-qualified",
+    "Confirmed"
+
+  ];
+  String selectedLeadType="Hot";
+  List<String> leadType=[
+    "Hot","Warm","Cold"
+  ];
   String token = "";
   CustomerProvider() {
     if (token == "") {

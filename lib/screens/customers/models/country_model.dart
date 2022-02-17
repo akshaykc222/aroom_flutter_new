@@ -13,11 +13,7 @@ class CustomerModel {
     required this.country,
     required this.state,
     this.address,
-    required this.leadSoruce,
-    required this.projectType,
-    required this.leadStatus,
-    required this.leadType,
-    required this.expenseSource,
+    this.status,
     this.createdDate,
     this.createdBusiness,
   });
@@ -33,11 +29,7 @@ class CustomerModel {
   String country;
   String state;
   String? address;
-  String leadSoruce;
-  String projectType;
-  String leadStatus;
-  String leadType;
-  String expenseSource;
+  bool? status;
   DateTime? createdDate;
   int? createdBusiness;
 
@@ -53,11 +45,7 @@ class CustomerModel {
     city: json["city"],
     country: json["country"],
     state: json["state"],
-    leadSoruce: json["lead_soruce"],
-    projectType: json["project_type"],
-    leadStatus: json["lead_status"],
-    leadType: json["lead_type"],
-    expenseSource: json["expense_source"],
+    status:json['status'],
     createdDate: DateTime.parse(json["created_date"]),
     createdBusiness: json["created_business"],
   );
@@ -74,12 +62,6 @@ class CustomerModel {
     "city": city,
     "country": country,
     "state": state,
-    "lead_soruce": leadSoruce,
-    "project_type": projectType,
-    "lead_status": leadStatus,
-    "lead_type": leadType,
-    "expense_source": expenseSource,
-
     "created_business": createdBusiness,
   };
 }

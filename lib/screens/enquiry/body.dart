@@ -251,7 +251,7 @@ class _EnquiryState extends State<Enquiry> {
                         child: Row(
                           children: const [
                             Icon(Icons.add),
-                            Text('Book appointment')
+                            Text('Add Enquiry')
                           ],
                         ),
                       ),

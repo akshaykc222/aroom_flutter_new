@@ -1,14 +1,13 @@
-import 'dart:io';
+
 
 import 'package:country_picker/country_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+
 import 'package:provider/provider.dart';
 import 'package:seed_sales/screens/customers/models/country_model.dart';
 import 'package:seed_sales/screens/customers/provider/customer_provider.dart';
-import 'package:intl/intl.dart';
+
 import '../../../componets.dart';
 import '../../../constants.dart';
 import '../../../sizeconfig.dart';
@@ -37,25 +36,25 @@ class _CustomerFormState extends State<CustomerForm> {
   final formKey = GlobalKey<FormState>();
   String image = "";
   DateTime selectedDate = DateTime.now();
-  _selectDate() async {
-    final DateTime? selected = await showDatePicker(
-      context: context,
-      initialDate: selectedDate,
-      firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(const Duration(days: 320)),
-    );
-    if (selected != null && selected != selectedDate) {
-      setState(() {
-        selectedDate = selected;
-
-
-      });
-    }
-  }
+  // _selectDate() async {
+  //   final DateTime? selected = await showDatePicker(
+  //     context: context,
+  //     initialDate: selectedDate,
+  //     firstDate: DateTime.now(),
+  //     lastDate: DateTime.now().add(const Duration(days: 320)),
+  //   );
+  //   if (selected != null && selected != selectedDate) {
+  //     setState(() {
+  //       selectedDate = selected;
+  //
+  //
+  //     });
+  //   }
+  // }
 
   _upload() {
     if (formKey.currentState!.validate()) {
-      print(mailController.text);
+      debugPrint(mailController.text);
       CustomerModel model = CustomerModel(
           id: widget.model != null ? widget.model!.id : null,
 
@@ -69,11 +68,7 @@ class _CustomerFormState extends State<CustomerForm> {
           city: cityController.text,
           pincode: pincodeController.text,
           address: addressController.text,
-          leadType: '',
-          leadSoruce: '',
-          leadStatus: '',
-          expenseSource: '',
-          projectType: '',
+
        );
       widget.model == null
           ? Provider.of<CustomerProvider>(context, listen: false)
@@ -88,7 +83,7 @@ class _CustomerFormState extends State<CustomerForm> {
     super.initState();
     if (widget.model != null) {
       try {
-        nameController.text = widget.model!.name!;
+        nameController.text = widget.model!.name;
         ageController.text = widget.model!.age.toString();
         phoneController.text = widget.model!.phone;
         stateController.text = widget.model!.state;
@@ -102,108 +97,108 @@ class _CustomerFormState extends State<CustomerForm> {
         mailController.text = widget.model!.email;
 
       } catch (e) {
-        print(e);
+        debugPrint(e.toString());
       }
     }
   }
+  //
+  // Future getImagefromcamera() async {
+  //   final ImagePicker _picker = ImagePicker();
+  //   XFile? image = await _picker.pickImage(source: ImageSource.camera);
+  //
+  //   if (image != null) {
+  //     File file = File(image.path);
+  //     _uploadImage(file);
+  //   }
+  // }
+  //
+  // _uploadImage(File file) {
+  //   showDialog(
+  //     context: context,
+  //     barrierDismissible: false,
+  //     builder: (BuildContext context) {
+  //       return Dialog(
+  //         child: SizedBox(
+  //           height: 100,
+  //           child: Row(
+  //             crossAxisAlignment: CrossAxisAlignment.center,
+  //             mainAxisSize: MainAxisSize.min,
+  //             mainAxisAlignment: MainAxisAlignment.center,
+  //             children: const [
+  //               CircularProgressIndicator(),
+  //               SizedBox(
+  //                 width: 20,
+  //               ),
+  //               Text("Loading.."),
+  //             ],
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   );
+  //
+  //   FirebaseStorage storage = FirebaseStorage.instance;
+  //   Reference ref = storage.ref().child("image" + DateTime.now().toString());
+  //   UploadTask uploadTask = ref.putFile(file);
+  //   uploadTask.then((res) async {
+  //     String url = await res.ref.getDownloadURL();
+  //     debugPrint(url);
+  //     setState(() {
+  //       image = url;
+  //     });
+  //     Navigator.pop(context);
+  //     Navigator.pop(context);
+  //     FocusScope.of(context).requestFocus(FocusNode());
+  //   });
+  // }
 
-  Future getImagefromcamera() async {
-    final ImagePicker _picker = ImagePicker();
-    XFile? image = await _picker.pickImage(source: ImageSource.camera);
-
-    if (image != null) {
-      File file = File(image.path);
-      _uploadImage(file);
-    }
-  }
-
-  _uploadImage(File file) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return Dialog(
-          child: SizedBox(
-            height: 100,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
-                CircularProgressIndicator(),
-                SizedBox(
-                  width: 20,
-                ),
-                Text("Loading.."),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-
-    FirebaseStorage storage = FirebaseStorage.instance;
-    Reference ref = storage.ref().child("image" + DateTime.now().toString());
-    UploadTask uploadTask = ref.putFile(file);
-    uploadTask.then((res) async {
-      String url = await res.ref.getDownloadURL();
-      debugPrint(url);
-      setState(() {
-        image = url;
-      });
-      Navigator.pop(context);
-      Navigator.pop(context);
-      FocusScope.of(context).requestFocus(FocusNode());
-    });
-  }
-
-  Future getImagefromGallery() async {
-    final ImagePicker _picker = ImagePicker();
-    var image = await _picker.pickImage(source: ImageSource.gallery);
-    if (image != null) {
-      File file = File(image.path);
-      _uploadImage(file);
-    }
-  }
-
-  showImageupload() {
-    showModalBottomSheet(
-        context: context,
-        builder: (_) {
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Wrap(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    Column(
-                      children: [
-                        FloatingActionButton(
-                          onPressed: getImagefromcamera,
-                          tooltip: "Pick Image form camera",
-                          child: Icon(Icons.add_a_photo),
-                        ),
-                        const Text('From camera')
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        FloatingActionButton(
-                          onPressed: getImagefromGallery,
-                          tooltip: "Pick Image from gallery",
-                          child: const Icon(Icons.camera_alt),
-                        ),
-                        const Text('From gallery')
-                      ],
-                    )
-                  ],
-                ),
-              ],
-            ),
-          );
-        });
-  }
+  // Future getImagefromGallery() async {
+  //   final ImagePicker _picker = ImagePicker();
+  //   var image = await _picker.pickImage(source: ImageSource.gallery);
+  //   if (image != null) {
+  //     File file = File(image.path);
+  //     _uploadImage(file);
+  //   }
+  // }
+  //
+  // showImageupload() {
+  //   showModalBottomSheet(
+  //       context: context,
+  //       builder: (_) {
+  //         return Padding(
+  //           padding: const EdgeInsets.all(8.0),
+  //           child: Wrap(
+  //             children: [
+  //               Row(
+  //                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //                 children: <Widget>[
+  //                   Column(
+  //                     children: [
+  //                       FloatingActionButton(
+  //                         onPressed: getImagefromcamera,
+  //                         tooltip: "Pick Image form camera",
+  //                         child: const Icon(Icons.add_a_photo),
+  //                       ),
+  //                       const Text('From camera')
+  //                     ],
+  //                   ),
+  //                   Column(
+  //                     children: [
+  //                       FloatingActionButton(
+  //                         onPressed: getImagefromGallery,
+  //                         tooltip: "Pick Image from gallery",
+  //                         child: const Icon(Icons.camera_alt),
+  //                       ),
+  //                       const Text('From gallery')
+  //                     ],
+  //                   )
+  //                 ],
+  //               ),
+  //             ],
+  //           ),
+  //         );
+  //       });
+  // }
 
   String counryCode = "";
   void pickCountry() {
@@ -252,11 +247,11 @@ class _CustomerFormState extends State<CustomerForm> {
               children: [
                 widget.model != null
                     ? const Text(
-                        'Update Customer',
+                        'Update Client',
                         style: TextStyle(color: whiteColor, fontSize: 20),
                       )
                     : const Text(
-                        'Create Customer',
+                        'Create Client',
                         style: TextStyle(color: whiteColor, fontSize: 20),
                       ),
                 columUserTextFileds(
@@ -288,25 +283,9 @@ class _CustomerFormState extends State<CustomerForm> {
                 picode("Pin code", "Pin code", TextInputType.number,
                     pincodeController),
 
-
                 spacer(10),
 
-                InkWell(
-                  onTap: () {
-                    showImageupload();
-                  },
-                  child: SizedBox(
-                    width: 100,
-                    height: 100,
-                    child: Center(
-                        child: image == ""
-                            ? const Icon(
-                                Icons.add_a_photo_outlined,
-                                color: Colors.white,
-                              )
-                            : Image.network(image)),
-                  ),
-                ),
+
                 spacer(10),
                 // Visibility(
                 //     visible: !isService, child: columUserTextFileds("Duration")),

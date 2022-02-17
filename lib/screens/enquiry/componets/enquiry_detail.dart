@@ -129,14 +129,14 @@ class _AppointmentDetailState extends State<AppointmentDetail> {
                             padding: EdgeInsets.all(8.0),
                             child: Text('Customer details',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 22),),
                           ),
-                          SizedBox(
-                              width:150,
-                              height: 150,
-                              child: Image.network(data!.image==null?"":data.image!)),
-                          DetailCard(head: 'Name', value: data.name!),
-                          DetailCard(head: 'Address', value: data.address),
+                          // SizedBox(
+                          //     width:150,
+                          //     height: 150,
+                          //     child: Image.network(data!.image==null?"":data.image!)),
+                          DetailCard(head: 'Name', value: data!.name),
+                          DetailCard(head: 'Address', value: data.address==null?"":data.address!),
                           DetailCard(head: 'Phone', value: data.phone),
-                          DetailCard(head: 'Email', value: data.mail),
+                          DetailCard(head: 'Email', value: data.email),
                           DetailCard(head: 'City', value: data.city),
 
                         ],
