@@ -1,26 +1,22 @@
-import 'dart:developer';
-import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:intl/intl.dart';
+
 import 'package:pdf/pdf.dart';
 import 'package:printing/printing.dart';
 import 'package:provider/provider.dart';
 import 'package:seed_sales/componets.dart';
-import 'package:seed_sales/screens/customers/models/country_model.dart';
-import 'package:seed_sales/screens/customers/provider/customer_provider.dart';
+
 import 'package:seed_sales/screens/enquiry/componets/due_edit.dart';
 import 'package:seed_sales/screens/enquiry/model/appointmentsmodel.dart';
-import 'package:seed_sales/screens/enquiry/model/timeslotmodel.dart';
+
 import 'package:seed_sales/screens/enquiry/provider/appointment_provider.dart';
 import 'package:seed_sales/screens/products/provider/products_provider.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:uuid/uuid.dart';
+
 
 class AppointmentDetail extends StatefulWidget {
-  final AppointMentModel model;
+  final EnquiryModel model;
   const AppointmentDetail({Key? key,required this.model}) : super(key: key);
 
   @override
@@ -38,46 +34,10 @@ class _AppointmentDetailState extends State<AppointmentDetail> {
 
     print(widget.model.toJson());
 
-    switch (widget.model.status) {
-      case "P":
-        setState(() {
-          print("==================e");
-          dropdownvalue = "enquired";
-        });
 
-        break;
-      case "E":
-        setState(() {
-          print("==================e");
-          dropdownvalue = "enquired";
-        });
-
-        break;
-      case "A":
-        setState(() {
-          print("==================ap");
-          dropdownvalue = "advance paid";
-        });
-        break;
-      case "C":
-        setState(() {
-          print("==================c");
-          dropdownvalue = "completed";
-        });
-        break;
-      case "F":
-        setState(() {
-          print("==================f");
-          dropdownvalue = "canceled";
-        });
-        break;
-    }
     super.initState();
 
-    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) async {
-      Provider.of<ProductProvider>(context,listen: false).gettemsWithList(context: context, id: widget.model.products);
-      print('=====================${widget.model.products}===========================');
-    });
+
 
   }
   void _printScreen() {
@@ -117,40 +77,8 @@ class _AppointmentDetailState extends State<AppointmentDetail> {
 
             child: Column(
               children: [
-                FutureBuilder(
-                  future: Provider.of<CustomerProvider>(context,listen: false).getCategoryListWithId(context, widget.model.customer),
-                  builder: (_,snapshot) {
-                   if(snapshot.hasData){
-                      CustomerModel? data =snapshot.data as CustomerModel?;
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Text('Customer details',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 22),),
-                          ),
-                          // SizedBox(
-                          //     width:150,
-                          //     height: 150,
-                          //     child: Image.network(data!.image==null?"":data.image!)),
-                          DetailCard(head: 'Name', value: data!.name),
-                          DetailCard(head: 'Address', value: data.address==null?"":data.address!),
-                          DetailCard(head: 'Phone', value: data.phone),
-                          DetailCard(head: 'Email', value: data.email),
-                          DetailCard(head: 'City', value: data.city),
 
-                        ],
-                      );
-                  }else{
-                     return const CircularProgressIndicator();
-                   }
-                }
-              ),
-                spacer(20),
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text('Selected services',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 22),),
-                ),
+
                 spacer(10),
                 Consumer<ProductProvider>(
                     builder: (_,snap,child){
@@ -168,27 +96,30 @@ class _AppointmentDetailState extends State<AppointmentDetail> {
                 spacer(20),
                 const Padding(
                   padding: EdgeInsets.all(8.0),
-                  child: Text('Appointment details',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 22),),
+                  child: Text('Enquiry details',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 22),),
                 ),
-                DetailCard(head: 'Proposed fee', value: widget.model.proposedFee.toString()),
-                DetailCard(head: 'Customer fee', value: widget.model.customerFee.toString()),
+                DetailCard(head: 'Customer name', value: widget.model.customer.name.toString()),
+                DetailCard(head: 'Customer Phone', value: widget.model.customer.phone.toString()),
 
-                DetailCard(head: 'Amount paid', value: widget.model.amountPaid.toString(),),
-                DetailCard(head: 'Due amount', value: widget.model.dueAmount.toString()),
-               DetailCard(head: 'Booked date', value: '${widget.model.bookingDate.day}-${widget.model.bookingDate.month}-${widget.model.bookingDate.year}',),
+                DetailCard(head: 'Customer mail', value: widget.model.customer.email.toString(),),
+                DetailCard(head: 'Customer address', value: widget.model.customer.address.toString()+"\n"+widget.model.customer.country+"\n"+widget.model.customer.state+"\n"+widget.model.customer.city+"\n"+widget.model.customer.pincode),
+               DetailCard(head: 'Project type', value: widget.model.projectType,),
+                DetailCard(head: 'Lead source', value: widget.model.leadSoruce,),
+                DetailCard(head: 'Lead type', value: widget.model.leadType,),
+                DetailCard(head: 'Lead status', value: widget.model.leadStatus,),
                 // widget.model.status == "F"?DetailCard(head: 'Booked Time', value: DateFormat.jm().format(DateFormat("hh:mm:ss").parse('${widget.model.bookingDate.hour}:${widget.model.bookingDate.minute}:00')),): DetailCardWithEdit(head: 'Booked time', value:DateFormat.jm().format(DateFormat("hh:mm:ss").parse('${widget.model.bookingDate.hour}:${widget.model.bookingDate.minute}:00')),edit: true,model: widget.model),
-                FutureBuilder(
-                    future: Provider.of<AppointmentProvider>(context,listen: false).getTimeSlotsWithId(context, widget.model.slot),
-                    builder: (context,data) {
-                      if(data.hasData){
-                        Timeslots t=data.data as Timeslots;
-                        return DetailCard(head: 'Booked Time', value: t.slot,);
-                      }else{
-                        return const Center(child: CircularProgressIndicator(),);
-                      }
-                    }
-                ),
-                DetailCard(head: 'Status',value: dropdownvalue,),
+                // FutureBuilder(
+                //     future: Provider.of<AppointmentProvider>(context,listen: false).getTimeSlotsWithId(context, widget.model.slot),
+                //     builder: (context,data) {
+                //       if(data.hasData){
+                //         Timeslots t=data.data as Timeslots;
+                //         return DetailCard(head: 'Booked Time', value: t.slot,);
+                //       }else{
+                //         return const Center(child: CircularProgressIndicator(),);
+                //       }
+                //     }
+                // ),
+
                 // Row(
                 //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 //   children: [
@@ -288,7 +219,7 @@ class DetailCard extends StatelessWidget {
 class DetailCardWithEdit extends StatefulWidget {
   final String head;
   final String value;
-  final AppointMentModel model;
+  final EnquiryModel model;
   final bool? edit;
   const DetailCardWithEdit({Key? key,required this.head,required this.value, this.edit,required this.model}) : super(key: key);
 
@@ -302,43 +233,27 @@ class _DetailCardWithEditState extends State<DetailCardWithEdit> {
   DateTime? bookDate;
   Future<void> _showTimePicker() async {
     final TimeOfDay? picked = await showTimePicker(
-        context: context, initialTime: TimeOfDay(hour: 5, minute: 10));
+        context: context, initialTime: const TimeOfDay(hour: 5, minute: 10));
     if (picked != null) {
       setState(() {
 
         bookTime=picked;
-        DateTime bookdate= DateTime(widget.model.bookingDate.year,widget.model.bookingDate.month,widget.model.bookingDate.day,bookTime!.hour,bookTime!.minute);
-        setState(() {
-          widget.model.bookingDate=bookdate;
-          String selTime =
-              bookdate.hour.toString() + ':' + bookdate.minute.toString() + ':00';
-          v=DateFormat.jm().format(DateFormat("hh:mm:ss").parse(selTime));
-        });
+        // DateTime bookdate= DateTime(widget.model.bookingDate.year,widget.model.bookingDate.month,widget.model.bookingDate.day,bookTime!.hour,bookTime!.minute);
+
         Provider.of<AppointmentProvider>(context,listen: false).updateCategory(context, widget.model);
 
       });
     }
   }
 
-  Future<void> _showBookingPicker() async {
-    final DateTime? picked = await showDatePicker(
-        context: context,
-        initialDate: DateTime.now(),
-        firstDate: DateTime.now(),
-        lastDate: DateTime.now().add(const Duration(days: 360)));
-    if (picked != null) {
-
-        bookDate=picked;
-        DateTime bookdate= DateTime(bookDate!.year,bookDate!.month,bookDate!.day,widget.model.bookingDate.hour,widget.model.bookingDate.minute);
-       setState(() {
-         widget.model.bookingDate=bookdate;
-         v='${widget.model.bookingDate.day}-${widget.model.bookingDate.month}-${widget.model.bookingDate.year}';
-
-       });
-        Provider.of<AppointmentProvider>(context,listen: false).updateCategory(context, widget.model);
-
-    }
-  }
+  // Future<void> _showBookingPicker() async {
+  //   final DateTime? picked = await showDatePicker(
+  //       context: context,
+  //       initialDate: DateTime.now(),
+  //       firstDate: DateTime.now(),
+  //       lastDate: DateTime.now().add(const Duration(days: 360)));
+  //
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -372,27 +287,27 @@ class _DetailCardWithEditState extends State<DetailCardWithEdit> {
           padding: const EdgeInsets.all(8.0),
           child: Text(v==null?'${widget.value} ':v!,style: const TextStyle(fontSize: 16,fontWeight: FontWeight.w300),),
         ),
-        widget.edit==null?Container():InkWell(
-          onTap: (){
-           if(widget.head=="Amount paid"){
-             showAlertDelete1(context);
-           }else if(widget.head=="Booked date"){
-             _showBookingPicker();
-           }else{
-             _showTimePicker();
-           }
-
-          },
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: SvgPicture.asset(
-              'assets/icons/edit.svg',
-              width: 20,
-              height: 20,
-              color: Colors.black,
-            ),
-          ),
-        ),
+        // widget.edit==null?Container():InkWell(
+        //   onTap: (){
+        //    if(widget.head=="Amount paid"){
+        //      showAlertDelete1(context);
+        //    }else if(widget.head=="Booked date"){
+        //      _showBookingPicker();
+        //    }else{
+        //      _showTimePicker();
+        //    }
+        //
+        //   },
+        //   child: Padding(
+        //     padding: const EdgeInsets.all(8.0),
+        //     child: SvgPicture.asset(
+        //       'assets/icons/edit.svg',
+        //       width: 20,
+        //       height: 20,
+        //       color: Colors.black,
+        //     ),
+        //   ),
+        // ),
 
       ],
     );

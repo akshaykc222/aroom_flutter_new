@@ -16,12 +16,21 @@ class CustomerProvider with ChangeNotifier {
   List<CustomerModel> tempList = [];
 
   String selectedLeadSource="Our marketing executives";
+  setLeadSource(String val){
+    selectedLeadSource=val;
+    notifyListeners();
+  }
+
   List<String> leadSource =[
     "Our marketing executives",
     "Social networks",
 
   ];
   String selectedLeadStatus="Attempt to contact";
+  setSelectedLeadStatus(String val){
+    selectedLeadStatus=val;
+    notifyListeners();
+  }
   List<String> leadStatus =[
     "Attempt to contact",
     "Contacted",
@@ -32,6 +41,10 @@ class CustomerProvider with ChangeNotifier {
 
   ];
   String selectedLeadType="Hot";
+  setSelectedLeadType(String val){
+    selectedLeadType=val;
+    notifyListeners();
+  }
   List<String> leadType=[
     "Hot","Warm","Cold"
   ];
@@ -62,7 +75,7 @@ class CustomerProvider with ChangeNotifier {
     List<CustomerModel> searchList = [];
     for (int i = 0; i < tempList.length; i++) {
       CustomerModel m = tempList[i];
-      if (m.name!.contains(s)) {
+      if (m.name.contains(s)) {
         searchList.add(m);
       }
     }

@@ -76,7 +76,7 @@ class UserProviderNew with ChangeNotifier {
   }
 
   void removeFromList(int businessId) {
-    roleList.removeWhere((element) => element!.business == businessId);
+    roleList.removeWhere((element) => element.business.id == businessId);
     notifyListeners();
   }
 

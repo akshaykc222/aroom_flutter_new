@@ -37,7 +37,7 @@ class _AddCompanyState extends State<AddCompany> {
                 itemBuilder: (_, index) {
                   return snapshot.roleList.isEmpty
                       ? Container()
-                      : AddBussinesChip(bussiness: snapshot.roleList[index]!);
+                      : AddBussinesChip(bussiness: snapshot.roleList[index]);
                 });
       }),
     );

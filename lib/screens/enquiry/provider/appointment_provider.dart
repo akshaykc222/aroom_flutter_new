@@ -4,52 +4,33 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:seed_sales/constants.dart';
-import 'package:seed_sales/screens/bussiness/body.dart';
+
 import 'package:seed_sales/screens/categories/models/categories_model.dart';
 import 'package:seed_sales/screens/enquiry/model/appointmentsmodel.dart';
-import 'package:seed_sales/screens/enquiry/model/timeslotmodel.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:uuid/uuid.dart';
+
 import 'package:http/http.dart' as http;
 
 class AppointmentProvider with ChangeNotifier {
   bool loading = false;
   bool update = false;
-  Timeslots? selectedSlot;
-  DateTime? selectedBookDate;
-  List<AppointMentModel> categoryList = [];
-  List<AppointMentModel> tempList = [];
-  int today_appoint=0;
 
-  int tommorow=0;
-  setBookDate(DateTime? bookdate){
-    selectedBookDate=bookdate;
-    notifyListeners();
-  }
+  DateTime? selectedBookDate;
+  List<EnquiryModel> enquiryList = [];
+  List<EnquiryModel> tempList = [];
+
+
   String token = "";
   AppointmentProvider() {
     if (token == "") {
       getToken();
     }
   }
-  void setSlotSelect(Timeslots? slot){
-    selectedSlot=slot;
-    notifyListeners();
-  }
-  void initTemp() {
-    if (tempList.isEmpty) {
-      tempList = categoryList;
-      debugPrint(categoryList.length.toString());
-      notifyListeners();
-    }
-  }
 
-  void retainList() {
-    categoryList.clear();
-    categoryList = tempList;
-    debugPrint(categoryList.length.toString());
-    notifyListeners();
-  }
+
+
+
 
   // void searchBusiness(String s) {
   //   initTemp();
@@ -64,103 +45,39 @@ class AppointmentProvider with ChangeNotifier {
   //   categoryList = searchList;
   //   notifyListeners();
   // }
-  void sortAscendingByDate(){
-    categoryList.sort((b,a)=>a.bookingDate.compareTo(b.bookingDate));
-    notifyListeners();
-  }
-  void sortDescendingByDate(){
-    categoryList.sort((a,b)=>a.bookingDate.compareTo(b.bookingDate));
-    notifyListeners();
-  }
-  void unFilterList(BuildContext context){
-    categoryList.clear();
-    tempList.clear();
-    getCategoryList(context);
-    notifyListeners();
-  }
+
+
   void clearTempList(){
     tempList.clear();
     notifyListeners();
   }
 
-  void filterListWithEnquired(){
 
 
 
-    List<AppointMentModel> tList=categoryList.where((element) => element.status=="E"||element.status=="P").toList();
-
-    tempList=tList;
-    notifyListeners();
-  }
-
-  void filterListWithCompleted(){
-
-    List<AppointMentModel> tList=categoryList.where((element) => element.status=="C").toList();
-
-    tempList.addAll(tList);
-    notifyListeners();
-  }
-  void filterListWithAdvancePaid(){
-
-    List<AppointMentModel> tList=categoryList.where((element) => element.status=="A").toList();
-
-    tempList.addAll(tList);
-    notifyListeners();
-  }
-  void filterListWithCanceled(){
-
-    List<AppointMentModel> tList=categoryList.where((element) => element.status=="F").toList();
-
-    tempList.addAll(tList);
-    notifyListeners();
-  }
-
-  void filterListWithTomorrow(){
-    if(tempList.isEmpty){
-      tempList=categoryList;
-    }
-    if(categoryList.length<tempList.length){
-      categoryList=tempList;
-    }
-    final tomorrow=DateTime(DateTime.now().year,DateTime.now().month,DateTime.now().day+1);
-    List<AppointMentModel> tList=categoryList.where((element) => element.bookingDate==tomorrow).toList();
-    categoryList.clear();
-    categoryList=tList;
-    notifyListeners();
-  }
-  Future<int> getCategoryList(BuildContext context) async {
-    if(categoryList.isEmpty){
+  Future<int> getEnquiry(BuildContext context) async {
+    if(enquiryList.isEmpty){
       loading = true;
       notifyListeners();
       if (token == "") {
         await getToken();
       }
-      categoryList.clear();
+      enquiryList.clear();
       debugPrint("======================================================");
       var header = {
         "Authorization": "Token $token",
         HttpHeaders.contentTypeHeader: 'application/json'
       };
 
-      final uri = Uri.parse('https://$baseUrl/api/v1/appointments/');
+      final uri = Uri.parse('https://$baseUrl/api/v1/enquiry/');
       debugPrint(token);
       final response = await http.get(uri, headers: header);
       debugPrint(response.body);
       if (response.statusCode == HttpStatus.ok) {
         Map<String, dynamic> data = json.decode(response.body);
-        categoryList = List<AppointMentModel>.from(
-            data["appointments"].map((x) => AppointMentModel.fromJson(x)));
-        DateTime today=DateTime.now();
-        final todayDate=DateTime(today.year,today.month,today.day);
-        final tomorow=DateTime(today.year,today.month,today.day+1);
-        categoryList.forEach((element) {
-          if(todayDate==element.bookingDate){
-            today_appoint=today_appoint+1;
-          }else if(tomorow==element.bookingDate){
-            tommorow=tommorow+1;
-          }
-        });
-        categoryList.sort((b,a)=>a.bookingDate.compareTo(b.bookingDate));
+        enquiryList = List<EnquiryModel>.from(
+            data["enquiries"].map((x) => EnquiryModel.fromJson(x)));
+
         loading = false;
 
         notifyListeners();
@@ -173,7 +90,7 @@ class AppointmentProvider with ChangeNotifier {
               context: context,
               builder: (BuildContext context) {
                 return CupertinoAlertDialog(
-                  title: const Text('Faild'),
+                  title: const Text('Failed'),
                   content: Text(data.toString()),
                   actions: <Widget>[
                     CupertinoDialogAction(
@@ -192,7 +109,7 @@ class AppointmentProvider with ChangeNotifier {
               context: context,
               builder: (BuildContext context) {
                 return CupertinoAlertDialog(
-                  title: const Text('Faild'),
+                  title: const Text('Failed'),
                   content: const Text(something),
                   actions: <Widget>[
                     CupertinoDialogAction(
@@ -217,7 +134,7 @@ class AppointmentProvider with ChangeNotifier {
     token = _prefs.getString("token")!;
   }
 
-  void addCategory(AppointMentModel model, BuildContext context) async {
+  void addEnquiry(EnquiryModel model, BuildContext context) async {
     loading = true;
     notifyListeners();
     if (token == "") {
@@ -228,28 +145,28 @@ class AppointmentProvider with ChangeNotifier {
       HttpHeaders.contentTypeHeader: 'application/json'
     };
     var body = model.toJson();
-    print(body);
-    final uri = Uri.parse('https://$baseUrl/api/v1/appointments/');
-    print(uri);
+    debugPrint(body.toString());
+    final uri = Uri.parse('https://$baseUrl/api/v1/enquiry/');
+    debugPrint(uri.toString());
     final response =
         await http.post(uri, headers: header, body: jsonEncode(body));
-    print(response.body);
+    debugPrint(response.body);
     if (response.statusCode == HttpStatus.created) {
       loading = false;
       notifyListeners();
       Navigator.pop(context);
-      getCategoryList(context);
+      getEnquiry(context);
       showDialog(
           context: context,
           builder: (BuildContext context) {
             return CupertinoAlertDialog(
               title: const Text('Added'),
-              content: const Text('appointments added successfully'),
+              content: const Text('Enquiry added successfully'),
               actions: <Widget>[
                 CupertinoDialogAction(
                   onPressed: () {
-                    categoryList.clear();
-                    getCategoryList(context);
+                    enquiryList.clear();
+                    getEnquiry(context);
                     Navigator.pop(context);
                   },
                   child: const Text('Ok'),
@@ -266,7 +183,7 @@ class AppointmentProvider with ChangeNotifier {
             context: context,
             builder: (BuildContext context) {
               return CupertinoAlertDialog(
-                title: const Text('Faild'),
+                title: const Text('Failed'),
                 content: Text(data.toString()),
                 actions: <Widget>[
                   CupertinoDialogAction(
@@ -285,7 +202,7 @@ class AppointmentProvider with ChangeNotifier {
             context: context,
             builder: (BuildContext context) {
               return CupertinoAlertDialog(
-                title: const Text('Faild'),
+                title: const Text('Failed'),
                 content: const Text(something),
                 actions: <Widget>[
                   CupertinoDialogAction(
@@ -299,95 +216,6 @@ class AppointmentProvider with ChangeNotifier {
             });
       }
     }
-  }
-
-  void deleteCategory(CategoriesModel model, BuildContext context) {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return CupertinoAlertDialog(
-            title: const Text('Delete'),
-            content: const Text('This will delete this appointments'),
-            actions: <Widget>[
-              CupertinoDialogAction(
-                onPressed: () {
-                  //action for delete
-                  void getBusinessList(BuildContext context) async {
-                    loading = true;
-                    notifyListeners();
-                    if (token == "") {
-                      await getToken();
-                    }
-                    categoryList.clear();
-                    debugPrint(
-                        "======================================================");
-                    var header = {
-                      "Authorization": "Token $token",
-                      HttpHeaders.contentTypeHeader: 'application/json'
-                    };
-
-                    final uri = Uri.parse(
-                        'https://$baseUrl/api/v1/categories/${model.id}/');
-                    debugPrint(token);
-                    final response = await http.delete(uri, headers: header);
-                    debugPrint(response.body);
-                    if (response.statusCode == HttpStatus.ok) {
-                      loading = false;
-                      notifyListeners();
-                    } else if (response.statusCode == HttpStatus.badRequest) {
-                      loading = false;
-                      notifyListeners();
-                      Map<String, dynamic> data = json.decode(response.body);
-                      try {
-                        showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return CupertinoAlertDialog(
-                                title: const Text('Failed'),
-                                content: Text(data['error']),
-                                actions: <Widget>[
-                                  CupertinoDialogAction(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                    child: const Text('Ok'),
-                                  ),
-                                ],
-                              );
-                            });
-                      } catch (e) {
-                        loading = false;
-                        notifyListeners();
-                        showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return CupertinoAlertDialog(
-                                title: const Text('Faild'),
-                                content: const Text(something),
-                                actions: <Widget>[
-                                  CupertinoDialogAction(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                    child: const Text('Ok'),
-                                  ),
-                                ],
-                              );
-                            });
-                      }
-                    }
-                    //notifyListeners();
-                  }
-
-                  categoryList.remove(model);
-                  notifyListeners();
-                  Navigator.pop(context);
-                },
-                child: const Text('delete'),
-              ),
-            ],
-          );
-        });
   }
 
   CategoriesModel? selectedCategory;
@@ -433,8 +261,8 @@ class AppointmentProvider with ChangeNotifier {
     };
 
 
-    final uri = Uri.parse('https://$baseUrl/api/v1/appointments/$id/');
-    print(uri);
+    final uri = Uri.parse('https://$baseUrl/api/v1/enquiry/$id/');
+    debugPrint(uri.toString());
     final response =
     await http.put(uri, headers: header, body: jsonEncode(model));
 
@@ -453,8 +281,8 @@ class AppointmentProvider with ChangeNotifier {
                     Navigator.pop(context);
                     loading = false;
                     notifyListeners();
-                    categoryList.clear();
-                    getCategoryList(context);
+                    enquiryList.clear();
+                    getEnquiry(context);
                   },
                   child: const Text('Ok'),
                 ),
@@ -490,7 +318,7 @@ class AppointmentProvider with ChangeNotifier {
             context: context,
             builder: (BuildContext context) {
               return CupertinoAlertDialog(
-                title: const Text('Faild'),
+                title: const Text('Failed'),
                 content: const Text(something),
                 actions: <Widget>[
                   CupertinoDialogAction(
@@ -505,7 +333,7 @@ class AppointmentProvider with ChangeNotifier {
       }
     }
   }
-  void updateCategory(BuildContext context, AppointMentModel model) async {
+  void updateCategory(BuildContext context, EnquiryModel model) async {
     loading = true;
     notifyListeners();
     if (token == "") {
@@ -516,9 +344,9 @@ class AppointmentProvider with ChangeNotifier {
       HttpHeaders.contentTypeHeader: 'application/json'
     };
     var body = model.toJson();
-    print(body);
-    final uri = Uri.parse('https://$baseUrl/api/v1/appointments/${model.id}/');
-    print(uri);
+    debugPrint(body.toString());
+    final uri = Uri.parse('https://$baseUrl/api/v1/enquiry/${model.id}/');
+    debugPrint(uri.toString());
     final response =
         await http.put(uri, headers: header, body: jsonEncode(body));
 
@@ -538,8 +366,8 @@ class AppointmentProvider with ChangeNotifier {
 
                     loading = false;
                     notifyListeners();
-                    categoryList.clear();
-                    getCategoryList(context);
+                    enquiryList.clear();
+                    getEnquiry(context);
                   },
                   child: const Text('Ok'),
                 ),
@@ -575,7 +403,7 @@ class AppointmentProvider with ChangeNotifier {
             context: context,
             builder: (BuildContext context) {
               return CupertinoAlertDialog(
-                title: const Text('Faild'),
+                title: const Text('Failed'),
                 content: const Text(something),
                 actions: <Widget>[
                   CupertinoDialogAction(
@@ -591,80 +419,8 @@ class AppointmentProvider with ChangeNotifier {
     }
   }
 //time slot
-  List<Timeslots> slots=[];
-  void getTimeSlots(BuildContext context,String date) async {
-    loading = true;
-    notifyListeners();
-    if (token == "") {
-      await getToken();
-    }
-    // slots.clear();
-    debugPrint("======================================================");
-    var header = {
-      "Authorization": "Token $token",
-      HttpHeaders.contentTypeHeader: 'application/json'
-    };
-    var body={
-      "date":date
-    };
-    final uri = Uri.parse('https://perfect-new.herokuapp.com/api/v1/timeslots/');
-    debugPrint(token);
 
-    // final newURI = uri.replace(queryParameters: params);
-    final response = await http.post(uri, headers: header,body: jsonEncode(body));
-    debugPrint(response.body);
-    if (response.statusCode == HttpStatus.ok) {
-      loading = false;
-      notifyListeners();
-      Map<String, dynamic> data = json.decode(response.body);
-      slots = List<Timeslots>.from(
-          data["timeslots"].map((x) => Timeslots.fromJson(x)));
-      print(slots.length);
-      notifyListeners();
-    } else if (response.statusCode == HttpStatus.badRequest) {
-      loading = false;
-      notifyListeners();
-      Map<String, dynamic> data = json.decode(response.body);
-      try {
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return CupertinoAlertDialog(
-                title: const Text('Failed'),
-                content: Text(data['error']),
-                actions: <Widget>[
-                  CupertinoDialogAction(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: const Text('Ok'),
-                  ),
-                ],
-              );
-            });
-      } catch (e) {
-        loading = false;
-        notifyListeners();
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return CupertinoAlertDialog(
-                title: const Text('Failed'),
-                content: const Text('some thing went wrong'),
-                actions: <Widget>[
-                  CupertinoDialogAction(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: const Text('Ok'),
-                  ),
-                ],
-              );
-            });
-      }
-    }
-    //notifyListeners();
-  }
+
   // void getTimeSlots(BuildContext context,String date) async {
   //   loading = true;
   //   notifyListeners();
@@ -738,75 +494,7 @@ class AppointmentProvider with ChangeNotifier {
   //   }
   //   //notifyListeners();
   // }
-  Future<Timeslots?> getTimeSlotsWithId(BuildContext context,int id) async {
-
-    if (token == "") {
-      await getToken();
-    }
-    // slots.clear();
-    debugPrint("=========================getting specif item=============================");
-    var header = {
-      "Authorization": "Token $token",
-      HttpHeaders.contentTypeHeader: 'application/json'
-    };
-
-    final uri = Uri.parse('https://perfect-new.herokuapp.com/api/v1/timeslots/$id/');
-    debugPrint(token);
-
-    // final newURI = uri.replace(queryParameters: params);
-    final response = await http.get(uri, headers: header);
-    debugPrint(response.body);
-    if (response.statusCode == HttpStatus.ok) {
-      print("status ok");
-      Map<String, dynamic> data = json.decode(response.body);
-      print(' gettede data${Timeslots.fromJson(data)}');
-      return Timeslots.fromJson(data);
-
-    }
-    //notifyListeners();
-  }
-
-  //status
-  String sel="p";
-  String dropDownvalue="enquired";
-  setSel(String p){
-    sel=p;
-    switch (p) {
-      case "P":
 
 
-        dropDownvalue = "enquired";
-
-
-        break;
-      case "E":
-
-          dropDownvalue = "enquired";
-
-
-        break;
-      case "A":
-
-          dropDownvalue = "advance paid";
-
-        break;
-      case "C":
-
-          dropDownvalue = "completed";
-
-        break;
-      case "F":
-
-
-          dropDownvalue = "canceled";
-
-        break;
-    }
-    notifyListeners();
-  }
-  setDropDownvalue(String s){
-    dropDownvalue=s;
-
-    notifyListeners();
-  }
+  //=
 }

@@ -31,8 +31,7 @@ class _SelectDateAndTimeSlotState extends State<SelectDateAndTimeSlot> {
         bookDate=picked;
         date.text = DateFormat("yyyy-MM-dd").format(picked);
        var p= Provider.of<AppointmentProvider>(context,listen: false);
-        p.setBookDate(bookDate);
-       p.getTimeSlots(context,DateFormat("yyyy-MM-dd").format(picked));
+
 
       });
     }
@@ -64,7 +63,7 @@ class _SelectDateAndTimeSlotState extends State<SelectDateAndTimeSlot> {
                 child: dateFiled(
                     "Booking date", "date", TextInputType.datetime, date),
               ),
-               TimeSlotList(date: date.text),
+
             ],
           ),
           Positioned(
@@ -95,14 +94,9 @@ class _SelectDateAndTimeSlotState extends State<SelectDateAndTimeSlot> {
               ),
               onTap: (startLoading, stopLoading, btnState) {
                 var p=Provider.of<AppointmentProvider>(context,listen: false);
-                Timeslots? slotSel=p.selectedSlot;
-                DateTime? selectedDate=p.selectedBookDate;
-                if(slotSel==null || selectedDate==null){
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please select time slot and date')));
 
-                }else{
-                  Navigator.pop(context);
-                }
+                DateTime? selectedDate=p.selectedBookDate;
+
 
               },
             ),
@@ -138,69 +132,4 @@ Widget dateFiled(String label, String hint, TextInputType keyboard,
       ),
     ),
   );
-}
-class TimeSlotList extends StatelessWidget {
-  final String date;
-  const TimeSlotList({Key? key, required this.date}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Consumer<AppointmentProvider>(
-          builder: (_,snap,child){
-            return snap.slots.isEmpty?const Center(child: Text('No time slot found for the selected date'),) : GridView.builder(
-              itemCount: snap.slots.length,
-              shrinkWrap: true,
-
-              physics:const BouncingScrollPhysics(),
-              itemBuilder: (BuildContext context, int index) {
-                return InkWell(
-                  onTap: (){
-                    snap.setSlotSelect(snap.slots[index]);
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                        // color: snap.selectedSlot!=null&&snap.selectedSlot!.id==snap.slots[index].id?Colors.lightBlue.shade400: Colors.pinkAccent.shade400,
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: snap.selectedSlot!=null&&snap.selectedSlot!.id==snap.slots[index].id?Colors.lightBlue.shade400: Colors.pinkAccent.shade400)
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          child: Text(snap.slots[index].slot,style: const TextStyle(color: Colors.black),),
-                        ),
-                        const SizedBox(height: 5,),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text('Slots',style:  TextStyle(color:snap.slots[index].count!<2?Colors.red: Colors.green,fontSize: 25,backgroundColor: Colors.white70,fontWeight: FontWeight.w900),),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text('${snap.slots[index].count}',style:  TextStyle(color:snap.slots[index].count!<2?Colors.red: Colors.green,fontSize: 25,backgroundColor: Colors.white70,fontWeight: FontWeight.w900),),
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
-
-                  ),
-                );
-
-              }, gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                mainAxisSpacing: 3,
-                crossAxisSpacing: 3,
-                childAspectRatio: 4/3
-            ),
-            );
-          }
-      ),
-    );
-  }
 }

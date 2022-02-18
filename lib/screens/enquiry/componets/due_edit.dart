@@ -1,10 +1,9 @@
-import 'dart:developer';
+
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:seed_sales/constants.dart';
-import 'package:seed_sales/screens/categories/models/categories_model.dart';
-import 'package:seed_sales/screens/categories/provider/category_provider.dart';
+
 import 'package:seed_sales/screens/enquiry/model/appointmentsmodel.dart';
 import 'package:seed_sales/screens/enquiry/provider/appointment_provider.dart';
 import 'package:seed_sales/sizeconfig.dart';
@@ -13,7 +12,7 @@ import '../../../componets.dart';
 import 'enquiry_detail.dart';
 
 class DueEdit extends StatefulWidget {
-  final AppointMentModel model;
+  final EnquiryModel model;
   const DueEdit({Key? key,required this.model}) : super(key: key);
 
   @override
@@ -28,7 +27,7 @@ class _DueEditState extends State<DueEdit> {
   double dueAmount=0.0;
   @override
   void initState() {
-    taxController.text=widget.model.amountPaid.toString();
+
     super.initState();
 
 
@@ -44,6 +43,7 @@ class _DueEditState extends State<DueEdit> {
         children: [
           headingText("Update Amount paid") ,
           spacer(10),
+
           amountPaid("Enter amount paid", "amount",
               TextInputType.number, taxController),
           // spacer(10),
@@ -65,8 +65,7 @@ class _DueEditState extends State<DueEdit> {
                             "due_amount":dueAmount
 
                           };
-                          widget.model.amountPaid=double.parse(taxController.text);
-                          widget.model.dueAmount=dueAmount;
+
                           Provider.of<AppointmentProvider>(context,listen: false).updateCategory(context, widget.model);
                           Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=>AppointmentDetail(model: widget.model,)));
                           }
@@ -96,21 +95,13 @@ class _DueEditState extends State<DueEdit> {
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
       child: TextFormField(
         validator: (value) {
-          if (value!.isEmpty) {
-            return "Please Enter value for $hint";
-          }else if(double.parse(value) > widget.model.customerFee){
-            return " value must be less than customer fee";
-          }
+
           return null;
         },
         controller: controller,
         keyboardType: keyboard,
         onChanged: (val){
-          if(widget.model.customerFee>=double.parse(taxController.text)) {
-            setState(() {
-              dueAmount=widget.model.customerFee-double.parse(taxController.text);
-            });
-          }
+
         },
         style: const TextStyle(color: textColor),
         decoration: InputDecoration(
