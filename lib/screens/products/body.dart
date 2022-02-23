@@ -10,6 +10,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:seed_sales/screens/customers/models/country_model.dart';
 import 'package:seed_sales/screens/customers/provider/customer_provider.dart';
 import 'package:seed_sales/screens/products/model/product_model.dart';
+import 'package:seed_sales/screens/products/model/project_model.dart';
 import 'package:seed_sales/screens/products/provider/products_provider.dart';
 import 'package:seed_sales/screens/subcategory/models/sub_category.dart';
 import 'package:seed_sales/screens/subcategory/provider/sub_category_provider.dart';
@@ -57,7 +58,7 @@ class Products extends StatelessWidget {
 }
 
 class AddTreatments extends StatefulWidget {
-  final ProductModel? model;
+  final ProjectModel? model;
   const AddTreatments({Key? key, this.model}) : super(key: key);
 
   @override
@@ -67,75 +68,73 @@ class AddTreatments extends StatefulWidget {
 class _AddTreatmentsState extends State<AddTreatments> {
   final titleController = TextEditingController();
   final purchaseController = TextEditingController();
-  final mrpController = TextEditingController();
+
+  final estimateController = TextEditingController();
 
   final startDateController = TextEditingController();
   final endDateController = TextEditingController();
-  final taxRateController = TextEditingController();
+  final remarkController = TextEditingController();
   String image = "";
   String service = "Supervising";
   List<String> serItems = ["Supervising", "Quotation based"];
+  DateTime? starDate;
+  DateTime? endDate;
 
   _upload() {
-    if (formKey.currentState!.validate()) {
-      int subID = Provider.of<SubCategoryProvider>(context, listen: false)
-          .selectedCategory!
-          .id!;
-      if (subID == null) {
-        errorLoader('select sub category');
-      }else if(Provider.of<TaxProvider>(context,listen: false).selectedBusiness==null){
-        errorLoader('select tax category');
-      } else if (widget.model != null) {
-        if (titleController.text.isEmpty || mrpController.text.isEmpty) {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(const SnackBar(content: Text('fields required')));
-        } else {
-          loader('Updating.please wait');
-          // ProductModel model = ProductModel(
-          //     image: image,
-          //     id: widget.model!.id,
-          //     name: titleController.text,
-          //     purchaseRate: double.parse(purchaseController.text),
-          //     mrp: double.parse(mrpController.text),
-          //     is_product: service == "service" ? false : true,
-          //
-          //     subCategory: subID,
-          //     taxRate: Provider.of<TaxProvider>(context,listen: false).selectedBusiness!.id!);
-          // Provider.of<ProductProvider>(context, listen: false)
-          //     .updateFun(context, model);
-          Navigator.pop(context);
-        }
-      } else {
-        if (titleController.text.isEmpty || mrpController.text.isEmpty) {
-          errorLoader('fields missing');
-        } else {
-          // loader('Updating.please wait');
-          // ProductModel model = ProductModel(
-          //     image: image,
-          //     name: titleController.text,
-          //     purchaseRate:purchaseController.text==null||purchaseController.text.isEmpty?0.0: double.parse(purchaseController.text),
-          //     mrp:mrpController.text==null?0.0: double.parse(mrpController.text),
-          //     salesPercentage:
-          //         salespController.text == null || salespController.text.isEmpty
-          //             ? 0.0
-          //             : double.parse(salespController.text),
-          //     salesRate:
-          //         salesRController.text == null || salesRController.text.isEmpty
-          //             ? 0.0
-          //             : double.parse(salesRController.text),
-          //     duration: durationController.text == null ||
-          //             durationController.text.isEmpty
-          //         ? 0.00
-          //         : double.parse(durationController.text),
-          //     is_product: service == "service" ? false : true,
-          //     subCategory: subID,
-          //     taxRate: Provider.of<TaxProvider>(context,listen: false).selectedBusiness!.id!);
-          // Provider.of<ProductProvider>(context, listen: false)
-          //     .add(model, context);
-          Navigator.pop(context);
-        }
-      }
+    print('===============uploading==================');
+
+    SubCategoryModel? subID = Provider
+        .of<SubCategoryProvider>(context, listen: false)
+        .selectedCategory;
+    if (subID == null) {
+      print('===============uploading failed==================');
+      errorLoader('select sub category');
+    } else if (Provider
+        .of<CustomerProvider>(context, listen: false)
+        .selectedCategory == null) {
+      print('===============uploading failed==================');
+      errorLoader('select client');
+    }else if(remarkController.text.isEmpty){
+      errorLoader('Please add remarks');
+  } else if(estimateController.text.isEmpty){
+      errorLoader('please add estimate amount');
+    }else if(endDate==null){
+      errorLoader('select deadline');
+    }else if(starDate==null){
+      errorLoader('select start date');
     }
+    else {
+      loader(
+          widget.model == null ? 'Updating.please wait' : 'adding please wait');
+
+
+      ProjectModel model = ProjectModel(
+
+        id: widget.model == null ? null : widget.model!.id,
+        name: titleController.text,
+
+
+        category: Provider
+            .of<SubCategoryProvider>(context, listen: false)
+            .selectedCategory!,
+        type: service,
+        startDate: starDate!,
+        deadLine: endDate!,
+        estProjectValue: double.parse(estimateController.text),
+        remarks: remarkController.text,
+        client: Provider
+            .of<CustomerProvider>(context, listen: false)
+            .selectedCategory!,
+      );
+      widget.model == null ? Provider.of<ProjectProvider>(
+          context, listen: false)
+          .add(model, context) : Provider.of<ProjectProvider>(
+          context, listen: false)
+          .updateFun(context, model);
+      Navigator.pop(context);
+    }
+
+
   }
 
   final formKey = GlobalKey<FormState>();
@@ -144,22 +143,30 @@ class _AddTreatmentsState extends State<AddTreatments> {
     super.initState();
     if (widget.model != null) {
       try {
-        image = widget.model!.image!;
-        titleController.text = widget.model!.name;
-        mrpController.text = widget.model!.mrp.toString();
-        purchaseController.text = widget.model!.purchaseRate.toString();
 
+        titleController.text = widget.model!.name;
+        remarkController.text=widget.model!.remarks;
+        endDate=widget.model!.deadLine;
+        starDate=widget.model!.startDate;
+        startDateController.text=DateFormat('dd-MM-yyyy').format(starDate!);
+        endDateController.text=DateFormat('dd-MM-yyyy').format(endDate!);
+        estimateController.text=widget.model!.estProjectValue.toString();
       } catch (e) {
         print('eroor');
       }
     }
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
-      Provider.of<TaxProvider>(context,listen: false).getBusinessList(context);
-      Provider.of<TaxProvider>(context,listen: false).setDropDownValue(null);
+      CustomerProvider c=Provider.of<CustomerProvider>(context,listen: false);
+      c.getCategoryList(context);
+      if(widget.model!=null){
+        c.setDropDownValue(widget.model!.client);
+
+      }
+
     });
   }
 
-  Future<void> _showDatePicker() async {
+  Future<void> _showStartPicker() async {
     final DateTime? picked = await showDatePicker(
         context: context,
         initialDate: DateTime.now(),
@@ -167,11 +174,24 @@ class _AddTreatmentsState extends State<AddTreatments> {
         lastDate: DateTime.now().add(const Duration(days: 360)));
     if (picked != null) {
       setState(() {
-
+        starDate=picked;
+        startDateController.text=DateFormat("dd-MM-yyyy").format(starDate!);
       });
     }
   }
-
+  Future<void> _showEndPicker() async {
+    final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: starDate?? DateTime.now(),
+        firstDate:starDate??  DateTime.now(),
+        lastDate: DateTime.now().add(const Duration(days: 360)));
+    if (picked != null) {
+      setState(() {
+        endDate=picked;
+        endDateController.text=DateFormat("dd-MM-yyyy").format(endDate!);
+      });
+    }
+  }
   loader(String message) {
     showDialog(
       context: context,
@@ -203,18 +223,25 @@ class _AddTreatmentsState extends State<AddTreatments> {
       builder: (BuildContext context) {
         return Dialog(
           child: SizedBox(
-            height: 100,
+            height: 150,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(message),
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text('Error',style: TextStyle(color: Colors.red,fontWeight: FontWeight.bold,fontSize: 18),),
+                ),
+                Text(message,style: const TextStyle(color: Colors.black,fontWeight: FontWeight.normal,fontSize: 18),),
                 spacer(10),
                 InkWell(
                     onTap: () {
                       Navigator.pop(context);
                     },
-                    child: defaultButton(300, "Ok"))
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: defaultButton(100, "Ok"),
+                    ))
               ],
             ),
           ),
@@ -237,7 +264,7 @@ class _AddTreatmentsState extends State<AddTreatments> {
             columUserTextFiledsBlack(
                 "Enter Title", "Title", TextInputType.name, titleController),
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 25),
               child: DropdownButtonFormField(
                 // Initial Value
                 value: service,
@@ -267,134 +294,152 @@ class _AddTreatmentsState extends State<AddTreatments> {
             ),
             const CategorySelection(),
 
+            // Padding(
+            //   padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 25),
+            //   child:
+            //   Consumer<TaxProvider>(builder: (context, provider, child) {
+            //     return DropdownButtonFormField(
+            //       value: provider.selectedBusiness,
+            //       icon: const Icon(Icons.keyboard_arrow_down),
+            //       decoration: InputDecoration(
+            //           labelText: "Tax",
+            //           floatingLabelBehavior: FloatingLabelBehavior.auto,
+            //           border: OutlineInputBorder(
+            //               borderRadius: BorderRadius.circular(15))),
+            //       items: provider.businessList
+            //           .map((e) => DropdownMenuItem<TaxModel>(
+            //           value: e, child: Text(e.name)))
+            //           .toList(),
+            //       onChanged: (TaxModel? value) {
+            //         setState(() {
+            //           provider.setDropDownValue(value!);
+            //         });
+            //       },
+            //     );
+            //   }),
+            // ),
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 25),
-              child:
-              Consumer<TaxProvider>(builder: (context, provider, child) {
-                return DropdownButtonFormField(
-                  value: provider.selectedBusiness,
-                  icon: const Icon(Icons.keyboard_arrow_down),
-                  decoration: InputDecoration(
-                      labelText: "Tax",
-                      floatingLabelBehavior: FloatingLabelBehavior.auto,
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15))),
-                  items: provider.businessList
-                      .map((e) => DropdownMenuItem<TaxModel>(
-                      value: e, child: Text(e.name)))
-                      .toList(),
-                  onChanged: (TaxModel? value) {
-                    setState(() {
-                      provider.setDropDownValue(value!);
-                    });
-                  },
-                );
-              }),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Consumer<CustomerProvider>(
+              padding: const EdgeInsets.symmetric(vertical:1,horizontal: 25),
+              child: SizedBox(
+                height: 70,
+                child: Consumer<CustomerProvider>(
 
-                builder: (context, snapshot,child) {
-                  return DropdownSearch<CustomerModel>(
-                      mode: Mode.MENU,
-                      showSearchBox: true,
+                  builder: (context, snapshot,child) {
+                    return DropdownSearch<CustomerModel>(
+                        mode: Mode.MENU,
+                        showSearchBox: true,
+                        dropdownSearchDecoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
 
-                      items: snapshot.customerList,
-                      label: "Client",
-                      hint: "Select client",
-                      itemAsString: (CustomerModel? m)=>m!.name!,
-                      onChanged: (value){
-                        snapshot.setDropDownValue(value);
-                      },
-                      selectedItem: snapshot.selectedCategory
-                  );
-                }
+                          )
+                        ),
+                        items: snapshot.customerList,
+                        label: "Client",
+                        hint: "Select client",
+                        itemAsString: (CustomerModel? m)=>m!.name,
+                        onChanged: (value){
+                          snapshot.setDropDownValue(value);
+                        },
+                        selectedItem: snapshot.selectedCategory
+                    );
+                  }
+                ),
               ),
             ),
            InkWell(
                     onTap: () {
-                      _showDatePicker();
+                      _showStartPicker();
                     },
                     child: dateField("Enter Start date", "Start date",
                         TextInputType.datetime, startDateController),
                   )
                ,
-
-            const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text(
-                'Product Images',
-                style: TextStyle(
-                    color: blackColor,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18),
-              ),
-            ),
             InkWell(
-              onTap: () async {
-                FilePickerResult? result =
-                    await FilePicker.platform.pickFiles(type: FileType.image);
-
-                if (result != null) {
-                  showDialog(
-                    context: context,
-                    barrierDismissible: false,
-                    builder: (BuildContext context) {
-                      return Dialog(
-                        child: SizedBox(
-                          height: 100,
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
-                              CircularProgressIndicator(),
-                              SizedBox(
-                                width: 20,
-                              ),
-                              Text("Loading.."),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                  File file = File(result.files.single.path!);
-                  FirebaseStorage storage = FirebaseStorage.instance;
-                  Reference ref =
-                      storage.ref().child("image" + DateTime.now().toString());
-                  UploadTask uploadTask = ref.putFile(file);
-                  uploadTask.then((res) async {
-                    String url = await res.ref.getDownloadURL();
-                    debugPrint(url);
-                    setState(() {
-                      image = url;
-                    });
-
-                    Navigator.pop(context);
-                  });
-                } else {
-                  // User canceled the picker
-                }
+              onTap: () {
+                _showEndPicker();
               },
-              child: image == ""
-                  ? SizedBox(
-                      width: 50,
-                      height: 50,
-                      child: Container(
-                        color: Colors.grey,
-                        child: const Center(
-                          child: Icon(Icons.add_a_photo_outlined),
-                        ),
-                      ),
-                    )
-                  : SizedBox(
-                      width: 150,
-                      height: 150,
-                      child: Image.network(image),
-                    ),
+              child: dateField("Enter dead line", "dead line",
+                  TextInputType.datetime, endDateController),
             ),
+            columUserTextFiledsBlack(
+                "Estimate  amount", "Estimate", const TextInputType.numberWithOptions(decimal: true), estimateController),
+            columUserTextFiledsBlack(
+                "Enter remarks", "remarks", TextInputType.name, remarkController),
+            // const Padding(
+            //   padding: EdgeInsets.all(8.0),
+            //   child: Text(
+            //     'Product Images',
+            //     style: TextStyle(
+            //         color: blackColor,
+            //         fontWeight: FontWeight.bold,
+            //         fontSize: 18),
+            //   ),
+            // ),
+            // InkWell(
+            //   onTap: () async {
+            //     FilePickerResult? result =
+            //         await FilePicker.platform.pickFiles(type: FileType.image);
+            //
+            //     if (result != null) {
+            //       showDialog(
+            //         context: context,
+            //         barrierDismissible: false,
+            //         builder: (BuildContext context) {
+            //           return Dialog(
+            //             child: SizedBox(
+            //               height: 100,
+            //               child: Row(
+            //                 crossAxisAlignment: CrossAxisAlignment.center,
+            //                 mainAxisSize: MainAxisSize.min,
+            //                 mainAxisAlignment: MainAxisAlignment.center,
+            //                 children: const [
+            //                   CircularProgressIndicator(),
+            //                   SizedBox(
+            //                     width: 20,
+            //                   ),
+            //                   Text("Loading.."),
+            //                 ],
+            //               ),
+            //             ),
+            //           );
+            //         },
+            //       );
+            //       File file = File(result.files.single.path!);
+            //       FirebaseStorage storage = FirebaseStorage.instance;
+            //       Reference ref =
+            //           storage.ref().child("image" + DateTime.now().toString());
+            //       UploadTask uploadTask = ref.putFile(file);
+            //       uploadTask.then((res) async {
+            //         String url = await res.ref.getDownloadURL();
+            //         debugPrint(url);
+            //         setState(() {
+            //           image = url;
+            //         });
+            //
+            //         Navigator.pop(context);
+            //       });
+            //     } else {
+            //       // User canceled the picker
+            //     }
+            //   },
+            //   child: image == ""
+            //       ? SizedBox(
+            //           width: 50,
+            //           height: 50,
+            //           child: Container(
+            //             color: Colors.grey,
+            //             child: const Center(
+            //               child: Icon(Icons.add_a_photo_outlined),
+            //             ),
+            //           ),
+            //         )
+            //       : SizedBox(
+            //           width: 150,
+            //           height: 150,
+            //           child: Image.network(image),
+            //         ),
+            // ),
             spacer(10),
             // Visibility(
             //     visible: !isService, child: columUserTextFileds("Duration")),
@@ -403,13 +448,10 @@ class _AddTreatmentsState extends State<AddTreatments> {
               children: [
                 InkWell(
                     onTap: () {
-                      SubCategoryModel? model =
-                          Provider.of<SubCategoryProvider>(context,
-                                  listen: false)
-                              .selectedCategory;
-                      model == null
-                          ? errorLoader('Please select subcategory')
-                          : _upload();
+
+
+
+                          _upload();
                     },
                     child: defaultButton(SizeConfig.screenWidth! * 0.5,
                         widget.model != null ? "update" : add)),
@@ -434,7 +476,7 @@ class _AddTreatmentsState extends State<AddTreatments> {
 Widget duration(String label, String hint, TextInputType keyboard,
     TextEditingController controller) {
   return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 25),
     child: TextFormField(
       validator: (vval) {
         if (vval!.isEmpty) {
@@ -469,7 +511,7 @@ Widget duration(String label, String hint, TextInputType keyboard,
 Widget dateField(String label, String hint, TextInputType keyboard,
     TextEditingController controller) {
   return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 25),
     child: TextFormField(
       controller: controller,
       keyboardType: keyboard,
@@ -478,21 +520,32 @@ Widget dateField(String label, String hint, TextInputType keyboard,
           labelText: label,
           enabled: false,
           labelStyle: const TextStyle(
-              fontSize: 20, fontWeight: FontWeight.bold, color: blackColor),
+              fontSize: 15, fontWeight: FontWeight.normal, color: blackColor),
           floatingLabelBehavior: FloatingLabelBehavior.auto,
           hintText: hint,
           hintStyle: const TextStyle(color: blackColor),
           filled: true,
-          enabledBorder: const UnderlineInputBorder(
-            borderSide: BorderSide(
+          enabledBorder:  OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(
               color: blackColor,
-              width: 2.0,
+              width: 0.5,
             ),
           ),
-          disabledBorder: const UnderlineInputBorder(
-              borderSide: BorderSide(color: blackColor)),
-          border: const UnderlineInputBorder(
-              borderSide: BorderSide(color: blackColor))),
+          disabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(
+              color: blackColor,
+              width: 0.5,
+            ),
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(
+              color: blackColor,
+              width: 0.5,
+            ),
+          )),
     ),
   );
 }

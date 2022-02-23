@@ -48,7 +48,7 @@ class _OrderProductsState extends State<OrderProducts> {
   // actual_fee.text=widget.model!.customerFee.toString();
     var p= Provider.of<CustomerProvider>(context,listen: false);
     var a= Provider.of<UserProviderNew>(context,listen: false);
-    var pr= Provider.of<ProductProvider>(context,listen: false);
+    var pr= Provider.of<ProjectProvider>(context,listen: false);
 
     var psd= Provider.of<AppointmentProvider>(context,listen: false);
 

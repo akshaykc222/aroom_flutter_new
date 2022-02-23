@@ -123,9 +123,9 @@ class _CustomerListState extends State<CustomerList> {
               crossAxisCount: 1,
               childAspectRatio: 3 / 1.5,
             ),
-            itemCount: snapshot.customerList.length,
+            itemCount: snapshot.customerListWithApproved.length,
             itemBuilder: (_, index) {
-              return CustomerListTile(model: snapshot.customerList[index]);
+              return  CustomerListTile(model: snapshot.customerList[index]);
             });
       }),
       bottomNavigationBar: const BottomAppBar(
@@ -139,7 +139,7 @@ class _CustomerListState extends State<CustomerList> {
         backgroundColor: lightBlack,
         onPressed: () {
           Navigator.push(
-              context, MaterialPageRoute(builder: (_) => const CustomerForm()));
+              context, MaterialPageRoute(builder: (_) => const CustomerForm(status: true,)));
         },
         child: const Center(
           child: Icon(Icons.add),

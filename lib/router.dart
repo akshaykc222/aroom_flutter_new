@@ -4,6 +4,7 @@ import 'package:seed_sales/screens/customers/body.dart';
 
 import 'package:seed_sales/screens/dashbord/body.dart';
 import 'package:seed_sales/screens/enquiry/body.dart';
+import 'package:seed_sales/screens/income/body.dart';
 import 'package:seed_sales/screens/login/body.dart';
 import 'package:seed_sales/screens/products/componets/product_list.dart';
 import 'package:seed_sales/screens/region/body.dart';
@@ -60,6 +61,8 @@ class RouterPage {
         return MaterialPageRoute(builder: (_) => const Login());
       case category:
         return MaterialPageRoute(builder: (_) => const Categories());
+      case incomeNav:
+        return MaterialPageRoute(builder: (_)=>const Income());
       default:
         return MaterialPageRoute(
             builder: (_) => Scaffold(

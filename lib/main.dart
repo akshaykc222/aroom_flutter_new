@@ -17,6 +17,7 @@ import 'package:seed_sales/screens/dashbord/body.dart';
 import 'package:seed_sales/screens/dashbord/provider/assigned_business_provider.dart';
 import 'package:seed_sales/screens/dashbord/provider/dashboard_provider.dart';
 import 'package:seed_sales/screens/enquiry/provider/appointment_provider.dart';
+import 'package:seed_sales/screens/income/provider/income_provider.dart';
 import 'package:seed_sales/screens/login/body.dart';
 import 'package:seed_sales/screens/login/provider/login_provider.dart';
 import 'package:seed_sales/screens/products/provider/products_provider.dart';
@@ -127,11 +128,12 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(create: (_) => UserProviderNew()),
         ChangeNotifierProvider(create: (_) => CategoriesProvider()),
         ChangeNotifierProvider(create: (_) => SubCategoryProvider()),
-        ChangeNotifierProvider(create: (_) => ProductProvider()),
+        ChangeNotifierProvider(create: (_) => ProjectProvider()),
         ChangeNotifierProvider(create: (_) => CustomerProvider()),
         ChangeNotifierProvider(create: (_) => AppointmentProvider()),
         ChangeNotifierProvider(create: (_) => TaxProvider()),
-        ChangeNotifierProvider(create: (_) => AssignedBussinessProvider())
+        ChangeNotifierProvider(create: (_) => AssignedBussinessProvider()),
+        ChangeNotifierProvider(create: (_) => IncomeProvider())
       ],
       child: MaterialApp(
         color: blackColor,

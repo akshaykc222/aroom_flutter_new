@@ -134,7 +134,7 @@ Widget columUserTextFileds(String label, String hint, TextInputType keyboard,
 Widget columUserTextFiledsBlack(String label, String hint,
     TextInputType keyboard, TextEditingController controller) {
   return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 25),
     child: TextFormField(
       validator: (value) {
         if (value!.isEmpty) {
@@ -148,21 +148,33 @@ Widget columUserTextFiledsBlack(String label, String hint,
       decoration: InputDecoration(
           labelText: label,
           labelStyle: const TextStyle(
-              fontSize: 20, fontWeight: FontWeight.bold, color: blackColor),
+              fontSize: 15, fontWeight: FontWeight.normal, color: blackColor),
           floatingLabelBehavior: FloatingLabelBehavior.auto,
           hintText: hint,
           hintStyle: const TextStyle(color: blackColor),
           filled: true,
-          enabledBorder: const UnderlineInputBorder(
-            borderSide: BorderSide(
+          enabledBorder:  OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide:const BorderSide(
               color: blackColor,
-              width: 2.0,
+              width: 0.5,
             ),
           ),
-          disabledBorder: const UnderlineInputBorder(
-              borderSide: BorderSide(color: blackColor)),
-          border: const UnderlineInputBorder(
-              borderSide: BorderSide(color: blackColor))),
+          disabledBorder:OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide:const BorderSide(
+              color: blackColor,
+              width: 0.5,
+            ),
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide:const BorderSide(
+              color: blackColor,
+              width: 0.5,
+            ),
+          )
+      ),
     ),
   );
 }
@@ -241,6 +253,25 @@ PreferredSize appBarWithSearch(
     ),
   );
 }
+InputDecoration defaultDecorationDropDown(String title, String hint) {
+  return InputDecoration(
+    floatingLabelBehavior: FloatingLabelBehavior.auto,
+    enabledBorder: UnderlineInputBorder(
+        borderSide: BorderSide(color: Colors.red.shade500, width: 1)),
+    focusedBorder: UnderlineInputBorder(
+        borderSide: BorderSide(color: Colors.grey.shade500, width: 1)),
+    fillColor: Colors.white70,
+    labelText: title,
+    hintText: hint,
+
+   suffixIcon: const Icon(Icons.arrow_drop_down,color: Colors.white,),
+    labelStyle: const TextStyle(
+      color: whiteColor,
+      fontSize: 13,
+    ),
+  );
+}
+
 
 InputDecoration defaultDecoration(String title, String hint) {
   return InputDecoration(
@@ -253,6 +284,7 @@ InputDecoration defaultDecoration(String title, String hint) {
     labelText: title,
     hintText: hint,
 
+    helperStyle: TextStyle(color: Colors.white),
     labelStyle: const TextStyle(
       color: whiteColor,
       fontSize: 13,

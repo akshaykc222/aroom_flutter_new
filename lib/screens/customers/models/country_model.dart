@@ -1,19 +1,17 @@
-
-
 class CustomerModel {
   CustomerModel({
     this.id,
     this.createdUser,
     required this.name,
-    required this.age,
+    this.age,
     required this.phone,
     required this.email,
+    required this.address,
     required this.pincode,
     required this.city,
     required this.country,
     required this.state,
-    this.address,
-    this.status,
+    required this.status,
     this.createdDate,
     this.createdBusiness,
   });
@@ -21,15 +19,15 @@ class CustomerModel {
   int? id;
   int? createdUser;
   String name;
-  int age;
+  int? age;
   String phone;
   String email;
+  String address;
   String pincode;
   String city;
   String country;
   String state;
-  String? address;
-  bool? status;
+  bool status;
   DateTime? createdDate;
   int? createdBusiness;
 
@@ -40,12 +38,12 @@ class CustomerModel {
     age: json["age"],
     phone: json["phone"],
     email: json["email"],
+    address: json["address"],
     pincode: json["pincode"],
-    address: json['address'],
     city: json["city"],
     country: json["country"],
     state: json["state"],
-    status:json['status'],
+    status: json["status"],
     createdDate: DateTime.parse(json["created_date"]),
     createdBusiness: json["created_business"],
   );
@@ -56,12 +54,13 @@ class CustomerModel {
     "name": name,
     "age": age,
     "phone": phone,
-    "address":address,
     "email": email,
+    "address": address,
     "pincode": pincode,
     "city": city,
     "country": country,
     "state": state,
+    "status": status,
     "created_business": createdBusiness,
   };
 }

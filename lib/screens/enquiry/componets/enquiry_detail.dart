@@ -80,19 +80,19 @@ class _AppointmentDetailState extends State<AppointmentDetail> {
 
 
                 spacer(10),
-                Consumer<ProductProvider>(
-                    builder: (_,snap,child){
-                    return snap.selectedListForAppointGet.isEmpty?const Center(child: CircularProgressIndicator(),):
-                        ListView.builder(
-                          physics:const NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                            itemCount: snap.selectedListForAppointGet.length,
-                            itemBuilder:(_,index){
-                              return ListTile(title: Text(snap.selectedListForAppointGet[index].name,style: const TextStyle(fontWeight: FontWeight.bold),
-                                            ),subtitle: Text(snap.selectedListForAppointGet[index].is_product!?"Product":"Service"),trailing: Text(snap.selectedListForAppointGet[index].mrp.toString()),);
-                            }
-                        );
-                }),
+                // Consumer<ProjectProvider>(
+                //     builder: (_,snap,child){
+                //     return snap.selectedListForAppointGet.isEmpty?const Center(child: CircularProgressIndicator(),):
+                //         ListView.builder(
+                //           physics:const NeverScrollableScrollPhysics(),
+                //           shrinkWrap: true,
+                //             itemCount: snap.selectedListForAppointGet.length,
+                //             itemBuilder:(_,index){
+                //               return ListTile(title: Text(snap.selectedListForAppointGet[index].name,style: const TextStyle(fontWeight: FontWeight.bold),
+                //                             ),subtitle: Text(snap.selectedListForAppointGet[index].is_product!?"Product":"Service"),trailing: Text(snap.selectedListForAppointGet[index].mrp.toString()),);
+                //             }
+                //         );
+                // }),
                 spacer(20),
                 const Padding(
                   padding: EdgeInsets.all(8.0),

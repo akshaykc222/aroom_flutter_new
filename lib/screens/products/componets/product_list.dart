@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:seed_sales/screens/products/body.dart';
 import 'package:seed_sales/screens/products/model/product_model.dart';
+import 'package:seed_sales/screens/products/model/project_model.dart';
 import 'package:seed_sales/screens/products/provider/products_provider.dart';
 
 import '../../../componets.dart';
@@ -21,14 +22,14 @@ class _ProductListState extends State<ProductList> {
     // TODO: implement initState
     super.initState();
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-      Provider.of<ProductProvider>(context, listen: false)
+      Provider.of<ProjectProvider>(context, listen: false)
           .get(context: context);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    void showAlertDelete1(BuildContext _context, {ProductModel? model}) {
+    void showAlertDelete1(BuildContext _context, {ProjectModel? model}) {
       showModalBottomSheet(
           context: _context,
           isScrollControlled: true,
@@ -36,13 +37,19 @@ class _ProductListState extends State<ProductList> {
             borderRadius: BorderRadius.circular(10.0),
           ),
           builder: (_) {
-            return Container(
-                height: MediaQuery.of(context).size.height * 0.95,
-                child: model != null
-                    ? AddTreatments(
-                        model: model,
-                      )
-                    : const AddTreatments());
+            return Wrap(
+              children: [
+                SizedBox(
+                  child: Container(
+
+                      child: model != null
+                          ? AddTreatments(
+                              model: model,
+                            )
+                          : const AddTreatments()),
+                ),
+              ],
+            );
           });
     }
 
@@ -108,7 +115,7 @@ class _ProductListState extends State<ProductList> {
       resizeToAvoidBottomInset: false,
       body: Container(
         color: lightBlack,
-        child: Consumer<ProductProvider>(builder: (context, snapshot, child) {
+        child: Consumer<ProjectProvider>(builder: (context, snapshot, child) {
           return snapshot.loading
               ? const Center(
                   child: CircularProgressIndicator(),
@@ -151,7 +158,7 @@ class _ProductListState extends State<ProductList> {
 }
 
 class ProductListTile extends StatelessWidget {
-  final ProductModel title;
+  final ProjectModel title;
   const ProductListTile({Key? key, required this.title}) : super(key: key);
 
   @override
@@ -191,7 +198,7 @@ class ProductListTile extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(4.0),
                   child: Text(
-                    title.mrp.toString(),
+                    'est value ${title.estProjectValue}',
                     style: const TextStyle(
                         color: textColor,
                         fontWeight: FontWeight.bold,
@@ -208,7 +215,7 @@ class ProductListTile extends StatelessWidget {
               children: [
                 InkWell(
                   onTap: () {
-                    Provider.of<ProductProvider>(context, listen: false)
+                    Provider.of<ProjectProvider>(context, listen: false)
                         .delete(title, context);
                   },
                   child: Container(

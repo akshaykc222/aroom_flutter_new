@@ -6,19 +6,26 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:seed_sales/screens/products/model/product_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:seed_sales/screens/products/model/project_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../constants.dart';
 
-class ProductProvider with ChangeNotifier {
+class ProjectProvider with ChangeNotifier {
   bool loading = false;
   bool update = false;
-  List<ProductModel> productList = [];
-  List<ProductModel> tempList = [];
-  List<ProductModel> selectedListForAppoint = [];
-  List<ProductModel> selectedListForAppointGet = [];
+  List<ProjectModel> productList = [];
+  List<ProjectModel> tempList = [];
+  List<ProjectModel> selectedListForAppoint = [];
+  List<ProjectModel> selectedListForAppointGet = [];
   String token = "";
   double totalPrice=0.0;
-  ProductProvider() {
+  ProjectModel? selectedModel;
+  changeSelectedModel(ProjectModel? model){
+    selectedModel=model;
+    notifyListeners();
+  }
+
+  ProjectProvider() {
     if (token == "") {
       getToken();
     }
@@ -28,40 +35,10 @@ class ProductProvider with ChangeNotifier {
     selectedListForAppoint.clear();
     notifyListeners();
   }
-  calculateTotalPriceForUpdate() {
-   if(selectedListForAppoint.isNotEmpty){
-     for (var element in selectedListForAppoint) {
-       totalPrice=totalPrice+ element.mrp;
-     }}
-   notifyListeners();
-  }
-  selectAppointmentProduct(ProductModel model) {
-    print("====addinf"+selectedListForAppoint.length.toString());
-    ProductModel? modelHas=selectedListForAppoint.firstWhereOrNull((ele)=>ele.id==model.id);
-    if (modelHas==null) {
-      selectedListForAppoint.add(model);
-      totalPrice=totalPrice+model.mrp;
-    }else{
-      totalPrice=totalPrice-model.mrp;
-      print(totalPrice.toString());
-      selectedListForAppoint.removeWhere((element) => element.id==model.id);
-
-    }
-    isSelectedProduct(model);
-    notifyListeners();
-  }
 
 
-  bool isSelectedProduct(ProductModel model) {
-    ProductModel? modelHas=selectedListForAppoint.firstWhereOrNull((ele)=>ele.id==model.id);
 
-    if (modelHas==null) {
-      return false;
-    }else{
-      return true;
-    }
 
-  }
 
     void initTemp() {
       if (tempList.isEmpty) {
@@ -80,9 +57,9 @@ class ProductProvider with ChangeNotifier {
 
     void search(String s) {
       initTemp();
-      List<ProductModel> searchList = [];
+      List<ProjectModel> searchList = [];
       for (int i = 0; i < tempList.length; i++) {
-        ProductModel m = tempList[i];
+        ProjectModel m = tempList[i];
         if (m.name.contains(s)) {
           searchList.add(m);
         }
@@ -91,44 +68,7 @@ class ProductProvider with ChangeNotifier {
       productList = searchList;
       notifyListeners();
     }
-  void gettemsWithListForUpdate({required BuildContext context, required List<int> id}) async {
 
-      print('getting');
-      loading = true;
-      notifyListeners();
-      if (token == "") {
-        await getToken();
-      }
-      selectedListForAppoint.clear();
-      debugPrint("=============================sdfsdfsdfsdfsdfsdfsdfsdfsdfsdfds=========================");
-      var header = {
-        "Authorization": "Token $token",
-        HttpHeaders.contentTypeHeader: 'application/json'
-      };
-      for (var element in id)  {
-        final uri;
-
-
-        uri = Uri.parse('https://$baseUrl/api/v1/products/$element/$element/');
-
-        debugPrint(token);
-        final response = await http.get(uri, headers: header);
-        debugPrint(response.body);
-        if (response.statusCode == HttpStatus.ok) {
-          Map<String, dynamic> data = json.decode(response.body);
-          selectedListForAppoint=List<ProductModel>.from(
-              data["products"].map((x) => ProductModel.fromJson(x)));
-          calculateTotalPriceForUpdate();
-          notifyListeners();
-        }
-      }
-      loading = false;
-
-
-
-    // notifyListeners();
-    //notifyListeners();
-  }
   void gettemsWithList({required BuildContext context, required List<int> id}) async {
     if(selectedListForAppointGet.isEmpty){
       print('getting');
@@ -147,15 +87,15 @@ class ProductProvider with ChangeNotifier {
         final uri;
 
 
-        uri = Uri.parse('https://$baseUrl/api/v1/products/$element/$element/');
+        uri = Uri.parse('https://$baseUrl/api/v1/projects/$element/$element/');
 
         debugPrint(token);
         final response = await http.get(uri, headers: header);
         debugPrint(response.body);
         if (response.statusCode == HttpStatus.ok) {
           Map<String, dynamic> data = json.decode(response.body);
-          selectedListForAppointGet=List<ProductModel>.from(
-              data["products"].map((x) => ProductModel.fromJson(x)));
+          selectedListForAppointGet=List<ProjectModel>.from(
+              data["projects"].map((x) => ProjectModel.fromJson(x)));
           notifyListeners();
         }
       }
@@ -183,15 +123,15 @@ class ProductProvider with ChangeNotifier {
       final uri;
 
       id != null
-          ? uri = Uri.parse('https://$baseUrl/api/v1/products/$id/')
-          : uri = Uri.parse('https://$baseUrl/api/v1/products/');
+          ? uri = Uri.parse('https://$baseUrl/api/v1/projects/$id/')
+          : uri = Uri.parse('https://$baseUrl/api/v1/projects/');
       debugPrint(token);
       final response = await http.get(uri, headers: header);
       debugPrint(response.body);
       if (response.statusCode == HttpStatus.ok) {
         Map<String, dynamic> data = json.decode(response.body);
-        productList = List<ProductModel>.from(
-            data["products"].map((x) => ProductModel.fromJson(x)));
+        productList = List<ProjectModel>.from(
+            data["projects"].map((x) => ProjectModel.fromJson(x)));
         loading = false;
 
         notifyListeners();
@@ -204,7 +144,7 @@ class ProductProvider with ChangeNotifier {
               context: context,
               builder: (BuildContext context) {
                 return CupertinoAlertDialog(
-                  title: const Text('Faild'),
+                  title: const Text('Failed'),
                   content: Text(data['error']),
                   actions: <Widget>[
                     CupertinoDialogAction(
@@ -247,7 +187,7 @@ class ProductProvider with ChangeNotifier {
       token = _prefs.getString("token")!;
     }
 
-    void add(ProductModel model, BuildContext context) async {
+    void add(ProjectModel model, BuildContext context) async {
       loading = true;
       notifyListeners();
       if (token == "") {
@@ -259,7 +199,7 @@ class ProductProvider with ChangeNotifier {
       };
       var body = model.toJson();
       print(body);
-      final uri = Uri.parse('https://$baseUrl/api/v1/products/');
+      final uri = Uri.parse('https://$baseUrl/api/v1/projects/');
       print(uri);
       final response =
       await http.post(uri, headers: header, body: jsonEncode(body));
@@ -274,7 +214,7 @@ class ProductProvider with ChangeNotifier {
             builder: (BuildContext context) {
               return CupertinoAlertDialog(
                 title: const Text('Added'),
-                content: const Text('Product added successfully'),
+                content: const Text('Project added successfully'),
                 actions: <Widget>[
                   CupertinoDialogAction(
                     onPressed: () {
@@ -330,17 +270,33 @@ class ProductProvider with ChangeNotifier {
       }
     }
 
-    void delete(ProductModel model, BuildContext context) {
+    void delete(ProjectModel model, BuildContext context) {
       showDialog(
           context: context,
           builder: (BuildContext context) {
             return CupertinoAlertDialog(
               title: const Text('Delete'),
-              content: const Text('This will delete this product'),
+              content: const Text('This will delete this Project'),
               actions: <Widget>[
                 CupertinoDialogAction(
-                  onPressed: () {
+                  onPressed: () async {
                     //action for delete
+                    var headers = {
+                      'Authorization': 'Token $token',
+                      'Content-Type': 'application/json'
+                    };
+                    var request = http.Request('DELETE', Uri.parse('https://$baseUrl/api/v1/projects/${model.id}/'));
+                    print(Uri.parse('https://$baseUrl/api/v1/projects/${model.id}'));
+                    request.headers.addAll(headers);
+
+                    http.StreamedResponse response = await request.send();
+
+                    if (response.statusCode == 200) {
+                      print(await response.stream.bytesToString());
+                    }
+                    else {
+                    print(response.reasonPhrase);
+                    }
 
                     productList.remove(model);
                     notifyListeners();
@@ -370,8 +326,8 @@ class ProductProvider with ChangeNotifier {
     //   notifyListeners();
     // }
 
-    ProductModel? updateModel;
-    void updateNavigate(BuildContext context, ProductModel model) {
+    ProjectModel? updateModel;
+    void updateNavigate(BuildContext context, ProjectModel model) {
       update = true;
       updateModel = model;
       debugPrint(updateModel!.toJson().toString());
@@ -380,7 +336,7 @@ class ProductProvider with ChangeNotifier {
       //     context, MaterialPageRoute(builder: (_) => const Bussiness()));
     }
 
-    void updateFun(BuildContext context, ProductModel model) async {
+    void updateFun(BuildContext context, ProjectModel model) async {
       loading = true;
       notifyListeners();
       if (token == "") {
@@ -393,7 +349,7 @@ class ProductProvider with ChangeNotifier {
       var body = model.toJson();
       print(body);
       final uri =
-      Uri.parse('https://$baseUrl/api/v1/products/${model.id}/');
+      Uri.parse('https://$baseUrl/api/v1/projects/${model.id}/');
       print(uri);
       final response =
       await http.put(uri, headers: header, body: jsonEncode(body));
@@ -406,7 +362,7 @@ class ProductProvider with ChangeNotifier {
             builder: (BuildContext context) {
               return CupertinoAlertDialog(
                 title: const Text('Updated'),
-                content: const Text('Product updated successfully'),
+                content: const Text('Project updated successfully'),
                 actions: <Widget>[
                   CupertinoDialogAction(
                     onPressed: () {
@@ -428,7 +384,7 @@ class ProductProvider with ChangeNotifier {
               context: context,
               builder: (BuildContext context) {
                 return CupertinoAlertDialog(
-                  title: const Text('Faild'),
+                  title: const Text('Failed'),
                   content: Text(data['error']),
                   actions: <Widget>[
                     CupertinoDialogAction(
@@ -448,7 +404,7 @@ class ProductProvider with ChangeNotifier {
               context: context,
               builder: (BuildContext context) {
                 return CupertinoAlertDialog(
-                  title: const Text('Faild'),
+                  title: const Text('Failed'),
                   content: const Text(something),
                   actions: <Widget>[
                     CupertinoDialogAction(

@@ -14,7 +14,7 @@ class CustomerProvider with ChangeNotifier {
   bool update = false;
   List<CustomerModel> customerList = [];
   List<CustomerModel> tempList = [];
-
+  List<CustomerModel> customerListWithApproved = [];
   String selectedLeadSource="Our marketing executives";
   setLeadSource(String val){
     selectedLeadSource=val;
@@ -138,6 +138,7 @@ class CustomerProvider with ChangeNotifier {
         Map<String, dynamic> data = json.decode(response.body);
         customerList = List<CustomerModel>.from(
             data["customers"].map((x) => CustomerModel.fromJson(x)));
+        customerListWithApproved=customerList.where((element) => element.status==true).toList();
         loading = false;
 
         notifyListeners();

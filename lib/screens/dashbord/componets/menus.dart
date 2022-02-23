@@ -43,7 +43,7 @@ class _AdminMenuState extends State<AdminMenu> {
         Navigator.pushNamed(context, products);
       }),
       MenuCard(icon: Icons.category, title: "Income", function: (){
-        Navigator.pushNamed(context, customers);
+        Navigator.pushNamed(context, incomeNav);
       }),
       MenuCard(icon: Icons.money_off, title: "Expenses", function: (){
         Navigator.pushNamed(context, customers);

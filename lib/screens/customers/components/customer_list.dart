@@ -14,7 +14,8 @@ import '../../../sizeconfig.dart';
 
 class CustomerForm extends StatefulWidget {
   final CustomerModel? model;
-  const CustomerForm({Key? key, this.model}) : super(key: key);
+  final bool? status;
+  const CustomerForm({Key? key, this.model, this.status}) : super(key: key);
 
   @override
   _CustomerFormState createState() => _CustomerFormState();
@@ -59,7 +60,7 @@ class _CustomerFormState extends State<CustomerForm> {
           id: widget.model != null ? widget.model!.id : null,
 
           name: nameController.text,
-          age: int.parse(ageController.text),
+          age: 0,
           phone: phoneController.text,
           email: mailController.text,
 
@@ -68,6 +69,7 @@ class _CustomerFormState extends State<CustomerForm> {
           city: cityController.text,
           pincode: pincodeController.text,
           address: addressController.text,
+        status: widget.status??false,
 
        );
       widget.model == null
@@ -264,8 +266,8 @@ class _CustomerFormState extends State<CustomerForm> {
                     phoneController),
                 emailWhiteField("Enter mail", "mail",
                     TextInputType.emailAddress, mailController),
-                columUserTextFileds(
-                    "Enter age", "age", TextInputType.number, ageController),
+                // columUserTextFileds(
+                //     "Enter age", "age", TextInputType.number, ageController),
 
                 InkWell(
                   onTap: () {
