@@ -11,6 +11,7 @@ import 'package:seed_sales/componets.dart';
 
 import 'package:seed_sales/screens/customers/models/country_model.dart';
 import 'package:seed_sales/screens/customers/provider/customer_provider.dart';
+import 'package:seed_sales/screens/enquiry/body.dart';
 import 'package:seed_sales/screens/enquiry/model/appointmentsmodel.dart';
 
 import 'package:seed_sales/screens/enquiry/provider/appointment_provider.dart';
@@ -296,7 +297,13 @@ class _OrderProductsState extends State<OrderProducts> {
               columUserTextFileds('Expense Source', 'Source', TextInputType.name, source),
 
               spacer(10),
-              defaultButton(300, widget.model==null?'Add':'Update'),
+              InkWell(
+                onTap: (){
+                  var ap=Provider.of<CustomerProvider>(context,listen: false);
+                  EnquiryModel model=EnquiryModel(leadSoruce: ap.selectedLeadSource, projectType: '', leadStatus: ap.selectedLeadSource, leadType: ap.selectedLeadType, expenseSource: '', customer: ap.selectedCategory!);
+                  Provider.of<AppointmentProvider>(context,listen: false).addEnquiry(model, context);
+                },
+                  child: defaultButton(300, widget.model==null?'Add':'Update')),
 
 
 
