@@ -53,33 +53,30 @@ class _SubCategoryState extends State<SubCategory> {
       extendBody: true,
       appBar: appBar("Sub Categories", [], context),
       resizeToAvoidBottomInset: false,
-      body: Container(
-        color: lightBlack,
-        child:
-        Consumer<SubCategoryProvider>(builder: (context, snapshot, child) {
-          return snapshot.loading?const Center(child: CircularProgressIndicator(color: whiteColor,),): GridView.builder(
-              shrinkWrap: true,
-              itemCount: snapshot.subcategoryList.length,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 5,
-                  crossAxisSpacing: 5,
-                  childAspectRatio:
-                  MediaQuery.of(context).size.width * 0.3 / 90),
-              itemBuilder: (_, index) {
-                return SubCategoryListTile(title: snapshot.subcategoryList[index],category: widget.category,);
-              });
-        }),
-      ),
-      bottomNavigationBar: const BottomAppBar(
-        color: blackColor,
-        child: SizedBox(
-          width: double.infinity,
-          height: 50,
-        ),
-      ),
+      backgroundColor: Colors.white,
+      body: Consumer<SubCategoryProvider>(builder: (context, snapshot, child) {
+        return snapshot.loading?const Center(child: CircularProgressIndicator(color: whiteColor,),): GridView.builder(
+            shrinkWrap: true,
+            itemCount: snapshot.subcategoryList.length,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisSpacing: 5,
+                crossAxisSpacing: 5,
+                childAspectRatio:
+                MediaQuery.of(context).size.width * 0.3 / 90),
+            itemBuilder: (_, index) {
+              return SubCategoryListTile(title: snapshot.subcategoryList[index],category: widget.category,);
+            });
+      }),
+      // bottomNavigationBar: const BottomAppBar(
+      //   color: blackColor,
+      //   child: SizedBox(
+      //     width: double.infinity,
+      //     height: 50,
+      //   ),
+      // ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: lightBlack,
+
         onPressed: () {
           showAlertDelete1(context);
         },
@@ -87,7 +84,7 @@ class _SubCategoryState extends State<SubCategory> {
           child: Icon(Icons.add),
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 }

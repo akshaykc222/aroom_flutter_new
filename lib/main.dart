@@ -136,14 +136,14 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(create: (_) => IncomeProvider())
       ],
       child: MaterialApp(
-        color: blackColor,
+        color: Colors.white,
         title: 'Body Perfect',
         theme: ThemeData(
             textTheme: GoogleFonts.bellezaTextTheme(
               Theme.of(context).textTheme,
             ),
-            primaryColor: blackColor,
-            scaffoldBackgroundColor: lightBlack),
+            primaryColor: Colors.blue,
+            scaffoldBackgroundColor: Colors.white),
         onGenerateRoute: RouterPage.generateRoute,
         home: const SplashFuturePage(),
       ),

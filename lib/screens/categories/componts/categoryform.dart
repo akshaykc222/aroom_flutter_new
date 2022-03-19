@@ -47,7 +47,7 @@ class _CategoryFormState extends State<CategoryForm> {
         children: [
          widget.model!=null?headingText("Update Categories"): headingText("Add Categories"),
           spacer(10),
-          columUserTextFiledsBlack("Enter category name", "category name",
+          columnUserTextFilledBlack("Enter category name", "category name",
               TextInputType.name, taxController),
           // spacer(10),
           // columUserTextFiledsBlack("Enter tax short name", "Tax short name", TextInputType.none, taxPercentageController),

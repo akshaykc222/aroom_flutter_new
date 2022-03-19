@@ -121,7 +121,7 @@ class _DesignationTileState extends State<DesignationTile> {
                   key: _formKey,
                   child: Column(
                     children: [
-                      columUserTextFiledsBlack("Designation title", "Designation",
+                      columnUserTextFilledBlack("Designation title", "Designation",
                           TextInputType.name, designationText),
                       spacer(10),
                       Row(

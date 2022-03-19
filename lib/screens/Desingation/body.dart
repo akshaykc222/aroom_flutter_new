@@ -35,7 +35,7 @@ class _DesignationsState extends State<Designations> {
                   key: _formKey,
                   child: Column(
                     children: [
-                      columUserTextFiledsBlack("Designation title", "Designation",
+                      columnUserTextFilledBlack("Designation title", "Designation",
                           TextInputType.name, designationText01),
                       spacer(10),
                       Row(

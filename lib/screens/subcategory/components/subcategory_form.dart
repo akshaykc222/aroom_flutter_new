@@ -46,7 +46,7 @@ class _SubCategoryFormState extends State<SubCategoryForm> {
               ? headingText("Update Sub Categories")
               : headingText("Add Sub Categories"),
           spacer(10),
-          columUserTextFiledsBlack("Enter Sub category name",
+          columnUserTextFilledBlack("Enter Sub category name",
               "Sub category name", TextInputType.name, taxController),
           // spacer(10),
           // columUserTextFiledsBlack("Enter tax short name", "Tax short name", TextInputType.none, taxPercentageController),

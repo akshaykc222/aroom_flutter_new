@@ -1,3 +1,4 @@
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:seed_sales/componets.dart';
@@ -10,7 +11,8 @@ import 'package:seed_sales/screens/subcategory/models/sub_category.dart';
 import 'package:seed_sales/screens/subcategory/provider/sub_category_provider.dart';
 
 class CategorySelection extends StatefulWidget {
-  const CategorySelection({Key? key}) : super(key: key);
+  final bool? update;
+  const CategorySelection({Key? key,  this.update}) : super(key: key);
 
   @override
   State<CategorySelection> createState() => _CategorySelectionState();
@@ -24,8 +26,11 @@ class _CategorySelectionState extends State<CategorySelection> {
     // TODO: implement initState
     super.initState();
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-      Provider.of<CategoriesProvider>(context, listen: false).emptyDropdown();
-      Provider.of<SubCategoryProvider>(context, listen: false).emptyDropDown();
+      if( widget.update==null){
+        // Provider.of<CategoriesProvider>(context, listen: false).emptyDropdown();
+        // Provider.of<SubCategoryProvider>(context, listen: false).emptyDropDown();
+      }
+
       Provider.of<CategoriesProvider>(context, listen: false)
           .getCategoryList(context);
       // Provider.of<SubCategoryProvider>(context, listen: false)
@@ -41,47 +46,15 @@ class _CategorySelectionState extends State<CategorySelection> {
           visible: visible,
           child: Column(
             children: [
+
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8,horizontal: 25),
+                padding:
+                    const EdgeInsets.only(top: 8, left: 25,right: 8,bottom: 8),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Text(
-                        'Category',
-                        style:
-                            TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    InkWell(
-                        onTap: () {
-                          Navigator.pushNamed(context, category);
-                          // showModalBottomSheet(
-                          //     context: context,
-                          //     shape: RoundedRectangleBorder(
-                          //       borderRadius: BorderRadius.circular(10.0),
-                          //     ),
-                          //     builder: (BuildContext context) {
-                          //       return Padding(
-                          //         padding: MediaQuery.of(context).viewInsets,
-                          //         child: const AddCategory(),
-                          //       );
-                          //     });
-                        },
-                        child: const Icon(
-                          Icons.add,
-                          size: 25,
-                        ))
-                  ],
-                ),
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: Padding(
-                      padding:
-                          const EdgeInsets.only(top: 8, left: 25,right: 8,bottom: 8),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width*0.7,
+                      height: 70,
                       child: Consumer<CategoriesProvider>(
                           builder: (context, snapshot, child) {
                         return snapshot.loading
@@ -92,25 +65,22 @@ class _CategorySelectionState extends State<CategorySelection> {
                                 ? const Center(
                                     child: Text('no  category found'),
                                   )
-                                : DropdownButtonFormField<CategoriesModel>(
+                                : DropdownSearch<CategoriesModel>(
                                     // Initial Value
-                                    value: snapshot.selectedCategory,
-                                    decoration: InputDecoration(
+                                    selectedItem: snapshot.selectedCategory,
+                                    mode: Mode.MENU,
+                                    itemAsString: (CategoriesModel?  m)=>m!.name,
+                                    dropdownSearchDecoration: InputDecoration(
                                         labelText: " Category",
                                         floatingLabelBehavior:
                                             FloatingLabelBehavior.auto,
                                         border: OutlineInputBorder(
                                             borderRadius: BorderRadius.circular(15))),
                                     // Down Arrow Icon
-                                    icon: const Icon(Icons.keyboard_arrow_down),
+
 
                                     // Array list of items
-                                    items: snapshot.categoryList.map((e) {
-                                      return DropdownMenuItem<CategoriesModel>(
-                                        value: e,
-                                        child: Text(e.name),
-                                      );
-                                    }).toList(),
+                                    items: snapshot.categoryList,
                                     // After selecting the desired option,it will
                                     // change button value to selected value
                                     onChanged: (CategoriesModel? newValue) {
@@ -125,12 +95,21 @@ class _CategorySelectionState extends State<CategorySelection> {
                                   );
                       }),
                     ),
-                  ),
-                  
-                  Expanded(
-                    child: Padding(
-                      padding:
-                      const EdgeInsets.only(top: 8, left: 8,right: 25,bottom: 8),
+                    IconButton(onPressed: (){
+                      showCategoryAdd(context);
+                    }, icon: const Icon(Icons.add))
+                  ],
+                ),
+              ),
+
+              Padding(
+                padding:
+                const EdgeInsets.only(top: 8, left: 25,right: 25,bottom: 8),
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width*0.7,
+                      height: 70,
                       child: Consumer<SubCategoryProvider>(
                           builder: (context, snapshot, child) {
                             return snapshot.loading
@@ -143,24 +122,19 @@ class _CategorySelectionState extends State<CategorySelection> {
                                   model!=null?
                                   Navigator.push(context, MaterialPageRoute(builder: (_)=>SubCategory(category: model,))):ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please select category to add subcategory')));
                                 },
-                                child: const Text('No sub category found add here.')),): DropdownButtonFormField<SubCategoryModel>(
+                                child: const Text('No sub category found add here.')),): DropdownSearch<SubCategoryModel>(
                               // Initial Value
-                              value: snapshot.selectedCategory,
-                              decoration: InputDecoration(
+                              selectedItem: snapshot.selectedCategory,
+                              dropdownSearchDecoration: InputDecoration(
                                   labelText: "Sub Category",
                                   floatingLabelBehavior: FloatingLabelBehavior.auto,
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(15))),
                               // Down Arrow Icon
-                              icon: const Icon(Icons.keyboard_arrow_down),
 
+                              itemAsString: (SubCategoryModel? m)=>m!.name,
                               // Array list of items
-                              items: snapshot.subcategoryList.map((e) {
-                                return DropdownMenuItem<SubCategoryModel>(
-                                  value: e,
-                                  child: Text(e.name),
-                                );
-                              }).toList(),
+                              items: snapshot.subcategoryList,
                               // After selecting the desired option,it will
                               // change button value to selected value
                               onChanged: (SubCategoryModel? newValue) {
@@ -169,8 +143,15 @@ class _CategorySelectionState extends State<CategorySelection> {
                             );
                           }),
                     ),
-                  ),
-                ],
+                    IconButton(onPressed: (){
+                      CategoriesModel? model= Provider.of<CategoriesProvider>(context, listen: false).selectedCategory;
+                      if(model!=null){
+                        showSubCategoryAdd(context,model );
+                      }
+
+                    }, icon:const Icon(Icons.add))
+                  ],
+                ),
               ),
              
             ],

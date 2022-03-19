@@ -20,22 +20,22 @@ class _AdminMenuState extends State<AdminMenu> {
   @override
   void initState() {
     itemList=[
-      MenuCard(icon: Icons.business_center_outlined, title: "Business", function: (){
-
-        Navigator.pushNamed(context, business);
-      }),
-      MenuCard(icon: Icons.vpn_key_outlined, title: "Roles", function: (){
-        Navigator.pushNamed(context, roleList);
-      }),
+      // MenuCard(icon: Icons.business_center_outlined, title: "Business", function: (){
+      //
+      //   Navigator.pushNamed(context, business);
+      // }),
+      // MenuCard(icon: Icons.vpn_key_outlined, title: "Roles", function: (){
+      //   Navigator.pushNamed(context, roleList);
+      // }),
       MenuCard(icon: Icons.work_outline, title: "Designations", function: (){
         Navigator.pushNamed(context, designation);
       }),
-      MenuCard(icon: Icons.person_outline, title: "User", function: (){
+      MenuCard(icon: Icons.person_outline, title: "Staffs", function: (){
         Navigator.pushNamed(context, userCreation);
       }),
-      MenuCard(icon: Icons.monetization_on_outlined, title: "Tax", function: (){
-        Navigator.pushNamed(context, taxNav);
-      }),
+      // MenuCard(icon: Icons.monetization_on_outlined, title: "Tax", function: (){
+      //   Navigator.pushNamed(context, taxNav);
+      // }),
       MenuCard(icon: Icons.category, title: "Categories", function: (){
         Navigator.pushNamed(context, category);
       }),

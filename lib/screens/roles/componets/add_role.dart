@@ -29,7 +29,7 @@ class _RoleFormState extends State<RoleForm> {
         children: [
           headingText("Add Role"),
           spacer(10),
-          columUserTextFiledsBlack("Enter Role name", "Role name", TextInputType.name, roleEdit),
+          columnUserTextFilledBlack("Enter Role name", "Role name", TextInputType.name, roleEdit),
           spacer(10),
           // columUserTextFiledsBlack("Enter tax short name", "Tax short name", TextInputType.none, taxPercentageController),
           // spacer(10),

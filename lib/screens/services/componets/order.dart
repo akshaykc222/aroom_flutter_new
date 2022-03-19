@@ -293,8 +293,8 @@ class _OrderProductsState extends State<OrderProducts> {
               spacer(10),
 
 
-            columUserTextFileds('Project type', 'type', TextInputType.name, type),
-              columUserTextFileds('Expense Source', 'Source', TextInputType.name, source),
+            columnUserTextFields('Project type', 'type', TextInputType.name, type),
+              columnUserTextFields('Expense Source', 'Source', TextInputType.name, source),
 
               spacer(10),
               InkWell(

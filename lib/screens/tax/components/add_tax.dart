@@ -39,13 +39,13 @@ class _TaxFormState extends State<TaxForm> {
             ? headingText("Add tax")
             : headingText("Update tax"),
         spacer(10),
-        columUserTextFiledsBlack(
+        columnUserTextFilledBlack(
             "Enter tax name", "Tax name", TextInputType.name, taxController),
         spacer(10),
-        columUserTextFiledsBlack("Enter tax short name", "Tax short name",
+        columnUserTextFilledBlack("Enter tax short name", "Tax short name",
             TextInputType.name, taxShortController),
         spacer(10),
-        columUserTextFiledsBlack("Enter tax percentage", "Tax percentage",
+        columnUserTextFilledBlack("Enter tax percentage", "Tax percentage",
             TextInputType.number, taxPercentageController),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,

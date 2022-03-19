@@ -1,9 +1,5 @@
-
-
 import 'package:country_picker/country_picker.dart';
-
 import 'package:flutter/material.dart';
-
 import 'package:provider/provider.dart';
 import 'package:seed_sales/screens/customers/models/country_model.dart';
 import 'package:seed_sales/screens/customers/provider/customer_provider.dart';
@@ -33,7 +29,6 @@ class _CustomerFormState extends State<CustomerForm> {
   final addressController = TextEditingController();
   final pincodeController = TextEditingController();
 
-
   final formKey = GlobalKey<FormState>();
   String image = "";
   DateTime selectedDate = DateTime.now();
@@ -57,21 +52,18 @@ class _CustomerFormState extends State<CustomerForm> {
     if (formKey.currentState!.validate()) {
       debugPrint(mailController.text);
       CustomerModel model = CustomerModel(
-          id: widget.model != null ? widget.model!.id : null,
-
-          name: nameController.text,
-          age: 0,
-          phone: phoneController.text,
-          email: mailController.text,
-
-          country: countryController.text,
-          state: stateController.text,
-          city: cityController.text,
-          pincode: pincodeController.text,
-          address: addressController.text,
-        status: widget.status??false,
-
-       );
+        id: widget.model != null ? widget.model!.id : null,
+        name: nameController.text,
+        age: 0,
+        phone: phoneController.text,
+        email: mailController.text,
+        country: countryController.text,
+        state: stateController.text,
+        city: cityController.text,
+        pincode: pincodeController.text,
+        address: addressController.text,
+        status: widget.status ?? false,
+      );
       widget.model == null
           ? Provider.of<CustomerProvider>(context, listen: false)
               .addCategory(model, context)
@@ -93,11 +85,10 @@ class _CustomerFormState extends State<CustomerForm> {
         countryController.text = widget.model!.country;
         stateController.text = widget.model!.state;
         cityController.text = widget.model!.city;
-        addressController.text = widget.model!.address==null?"":widget.model!.address!;
+        addressController.text = widget.model!.address;
         pincodeController.text = widget.model!.pincode.toString();
 
         mailController.text = widget.model!.email;
-
       } catch (e) {
         debugPrint(e.toString());
       }
@@ -202,7 +193,7 @@ class _CustomerFormState extends State<CustomerForm> {
   //       });
   // }
 
-  String counryCode = "";
+  String countryCode = "";
   void pickCountry() {
     showCountryPicker(
       context: context,
@@ -230,7 +221,7 @@ class _CustomerFormState extends State<CustomerForm> {
       onSelect: (Country country) {
         setState(() {
           countryController.text = country.name;
-          counryCode = country.countryCode;
+          countryCode = country.countryCode;
         });
       },
     );
@@ -256,7 +247,7 @@ class _CustomerFormState extends State<CustomerForm> {
                         'Create Client',
                         style: TextStyle(color: whiteColor, fontSize: 20),
                       ),
-                columUserTextFileds(
+                columnUserTextFields(
                     "Enter name", "Title", TextInputType.name, nameController),
 
                 phoneTextField(
@@ -276,17 +267,16 @@ class _CustomerFormState extends State<CustomerForm> {
                   child: country("Enter Country", "Country", TextInputType.name,
                       countryController),
                 ),
-                columUserTextFileds("Enter State", "State", TextInputType.name,
+                columnUserTextFields("Enter State", "State", TextInputType.name,
                     stateController),
-                columUserTextFileds(
+                columnUserTextFields(
                     "Enter City", "City", TextInputType.name, cityController),
-                columUserTextFileds("Enter address", "address",
+                columnUserTextFields("Enter address", "address",
                     TextInputType.streetAddress, addressController),
                 picode("Pin code", "Pin code", TextInputType.number,
                     pincodeController),
 
                 spacer(10),
-
 
                 spacer(10),
                 // Visibility(
@@ -332,7 +322,6 @@ Widget notManditaryFields(String label, String hint, TextInputType keyboard,
   return Padding(
     padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
     child: TextFormField(
-      
       controller: controller,
       keyboardType: keyboard,
       style: const TextStyle(color: textColor),

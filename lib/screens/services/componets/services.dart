@@ -176,9 +176,9 @@ class _AddCategoryState extends State<AddCategory> {
               },
             ),
           ),
-          columUserTextFileds("title","title",TextInputType.name,title),
-          columUserTextFileds("discount price","1800",TextInputType.number,discount),
-          columUserTextFileds("actual price","1820",TextInputType.number,actual),
+          columnUserTextFields("title","title",TextInputType.name,title),
+          columnUserTextFields("discount price","1800",TextInputType.number,discount),
+          columnUserTextFields("actual price","1820",TextInputType.number,actual),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
             child: DropdownButtonFormField(
@@ -208,8 +208,8 @@ class _AddCategoryState extends State<AddCategory> {
               },
             ),
           ),
-          columUserTextFileds("duration(optional)","15 hr",TextInputType.number,duration),
-          columUserTextFileds("expiry date(optional)","expiry date",TextInputType.datetime,exp_date),
+          columnUserTextFields("duration(optional)","15 hr",TextInputType.number,duration),
+          columnUserTextFields("expiry date(optional)","expiry date",TextInputType.datetime,exp_date),
           defaultButton(300, add)
         ],
       ),

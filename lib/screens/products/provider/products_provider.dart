@@ -419,4 +419,11 @@ class ProjectProvider with ChangeNotifier {
         }
       }
     }
+    List<String> statusList=['COMPLETED','PENDING','ON GOING','NOT STARTED'];
+    String selectedStatus="PENDING";
+    changeStatus(String sts){
+      selectedStatus=sts;
+      notifyListeners();
+    }
+
   }

@@ -12,6 +12,7 @@ class ProjectModel {
     required this.estProjectValue,
     required this.remarks,
     this.createdDate,
+    required this.status,
     required this.category,
     required this.client,
   });
@@ -24,6 +25,7 @@ class ProjectModel {
   DateTime deadLine;
   double estProjectValue;
   String remarks;
+  String status="PENDING";
   DateTime? createdDate;
   SubCategoryModel category;
   CustomerModel client;
@@ -33,6 +35,7 @@ class ProjectModel {
     createdUser: json["created_user"],
     name: json["name"],
     type: json["type"],
+    status: json['status']??"PENDING",
     startDate: DateTime.parse(json["start_date"]),
     deadLine: DateTime.parse(json["dead_line"]),
     estProjectValue: json["est_project_value"].toDouble(),
@@ -47,6 +50,7 @@ class ProjectModel {
     "created_user": createdUser,
     "name": name,
     "type": type,
+    "status":status,
     "start_date": "${startDate.year.toString().padLeft(4, '0')}-${startDate.month.toString().padLeft(2, '0')}-${startDate.day.toString().padLeft(2, '0')}",
     "dead_line": "${deadLine.year.toString().padLeft(4, '0')}-${deadLine.month.toString().padLeft(2, '0')}-${deadLine.day.toString().padLeft(2, '0')}",
     "est_project_value": estProjectValue,

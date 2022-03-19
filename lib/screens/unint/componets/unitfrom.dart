@@ -23,9 +23,9 @@ class _UnitFormState extends State<UnitForm> {
       children: [
         headingText("Add Unit"),
         spacer(10),
-        columUserTextFiledsBlack("Enter Unit name", "Unit name", TextInputType.none, taxController),
+        columnUserTextFilledBlack("Enter Unit name", "Unit name", TextInputType.none, taxController),
         spacer(10),
-        columUserTextFiledsBlack("Enter Unit short name", "Unit short name", TextInputType.none, taxPercentageController),
+        columnUserTextFilledBlack("Enter Unit short name", "Unit short name", TextInputType.none, taxPercentageController),
         spacer(10),
         // columUserTextFiledsBlack("Enter tax percentage", "Tax percentage", TextInputType.number, taxPercentageController),
         Row(

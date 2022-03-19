@@ -23,7 +23,7 @@ class _RegionFormState extends State<RegionForm> {
       children: [
         headingText("Add Region"),
         spacer(10),
-        columUserTextFiledsBlack("Enter Region name", "Region name", TextInputType.none, taxController),
+        columnUserTextFilledBlack("Enter Region name", "Region name", TextInputType.none, taxController),
         spacer(10),
         // columUserTextFiledsBlack("Enter tax short name", "Tax short name", TextInputType.none, taxPercentageController),
         // spacer(10),

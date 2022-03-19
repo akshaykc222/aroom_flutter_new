@@ -10,7 +10,7 @@ class Search extends StatelessWidget {
     final ctrl=TextEditingController();
     return Column(
       children: [
-        columUserTextFileds("search","",TextInputType.name,ctrl),
+        columnUserTextFields("search","",TextInputType.name,ctrl),
         spacer(10),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

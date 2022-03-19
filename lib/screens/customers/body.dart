@@ -6,10 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:seed_sales/componets.dart';
 import 'package:seed_sales/constants.dart';
 import 'package:seed_sales/screens/customers/components/customer_list.dart';
-
 import 'package:seed_sales/screens/customers/provider/customer_provider.dart';
-import 'package:seed_sales/screens/products/provider/products_provider.dart';
-
 import 'package:seed_sales/sizeconfig.dart';
 
 import 'models/country_model.dart';
@@ -30,7 +27,7 @@ class _CustomerListState extends State<CustomerList> {
           borderRadius: BorderRadius.circular(10.0),
         ),
         builder: (_) {
-          return Container(
+          return SizedBox(
             height: MediaQuery.of(context).size.height * 8,
             child: Padding(
               padding: EdgeInsets.only(
@@ -92,7 +89,6 @@ class _CustomerListState extends State<CustomerList> {
                       if (value.isEmpty) {
                         Provider.of<CustomerProvider>(context, listen: false)
                             .retainList();
-                        print("fdvfdvfdvv");
                       }
                       Provider.of<CustomerProvider>(context, listen: false)
                           .searchBusiness(value);
@@ -125,7 +121,7 @@ class _CustomerListState extends State<CustomerList> {
             ),
             itemCount: snapshot.customerListWithApproved.length,
             itemBuilder: (_, index) {
-              return  CustomerListTile(model: snapshot.customerList[index]);
+              return CustomerListTile(model: snapshot.customerList[index]);
             });
       }),
       bottomNavigationBar: const BottomAppBar(
@@ -139,7 +135,11 @@ class _CustomerListState extends State<CustomerList> {
         backgroundColor: lightBlack,
         onPressed: () {
           Navigator.push(
-              context, MaterialPageRoute(builder: (_) => const CustomerForm(status: true,)));
+              context,
+              MaterialPageRoute(
+                  builder: (_) => const CustomerForm(
+                        status: true,
+                      )));
         },
         child: const Center(
           child: Icon(Icons.add),
@@ -168,7 +168,7 @@ class CustomerListTile extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                model.name!,
+                model.name,
                 style: textStyle(
                     SizeConfig.blockSizeHorizontal! * 6, FontWeight.bold),
               ),

@@ -157,9 +157,9 @@ class _CreateBussinessState extends State<CreateBussiness> {
             }),
           ),
 
-          columUserTextFileds("Enter Business Name", "Business name",
+          columnUserTextFields("Enter Business Name", "Business name",
               TextInputType.name, bussinessController),
-          columUserTextFileds("Enter Address", "Address",
+          columnUserTextFields("Enter Address", "Address",
               TextInputType.multiline, addressController),
           // Padding(
           //   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
@@ -209,9 +209,9 @@ class _CreateBussinessState extends State<CreateBussiness> {
             child: country("Enter Country name", "Country",
                 TextInputType.name, countryController),
           ),
-          columUserTextFileds(
+          columnUserTextFields(
               "Enter State name", "State", TextInputType.name, stateController),
-          columUserTextFileds(
+          columnUserTextFields(
               "Enter City name", "City", TextInputType.name, cityController),
           taxField("Enter tax number", "Tax number",
               TextInputType.name, taxController),

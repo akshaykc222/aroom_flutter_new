@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:seed_sales/screens/products/body.dart';
 import 'package:seed_sales/screens/products/model/product_model.dart';
@@ -30,119 +31,42 @@ class _ProductListState extends State<ProductList> {
   @override
   Widget build(BuildContext context) {
     void showAlertDelete1(BuildContext _context, {ProjectModel? model}) {
-      showModalBottomSheet(
-          context: _context,
-          isScrollControlled: true,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.0),
-          ),
-          builder: (_) {
-            return Wrap(
-              children: [
-                SizedBox(
-                  child: Container(
-
-                      child: model != null
-                          ? AddTreatments(
-                              model: model,
-                            )
-                          : const AddTreatments()),
-                ),
-              ],
-            );
-          });
+      Navigator.push(context, MaterialPageRoute(builder: (_)=>model != null
+          ? AddTreatments(
+        model: model,
+      )
+          : const AddTreatments()));
     }
 
     return Scaffold(
       extendBody: true,
-      appBar: PreferredSize(
-        preferredSize: Size(MediaQuery.of(context).size.width, 80),
-        child: Container(
-          color: blackColor,
-          height: 80,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              InkWell(
-                onTap: () {
-                  Navigator.pop(context);
-                },
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  child: Container(
-                    decoration: const BoxDecoration(
-                        color: lightBlack, shape: BoxShape.circle),
-                    child: const Icon(
-                      Icons.arrow_back,
-                      size: 30,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-              Row(
-                children: [
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.5,
-                    height: 50,
-                    child: const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: TextField(
-                        style: TextStyle(color: Colors.white),
-                        cursorColor: Colors.white,
-                        decoration: InputDecoration(
-                            hintText: "search",
-                            labelText: "Search",
-                            labelStyle: TextStyle(color: Colors.white),
-                            hintStyle: TextStyle(color: Colors.white),
-                            suffixIcon: Icon(
-                              Icons.search,
-                              color: Colors.white,
-                            ),
-                            fillColor: lightBlack,
-                            filled: true),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title:const Text('Projects'),
       ),
       resizeToAvoidBottomInset: false,
-      body: Container(
-        color: lightBlack,
-        child: Consumer<ProjectProvider>(builder: (context, snapshot, child) {
-          return snapshot.loading
-              ? const Center(
-                  child: CircularProgressIndicator(),
-                )
-              : GridView.builder(
-                  shrinkWrap: true,
-                  itemCount: snapshot.productList.length,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 5,
-                      crossAxisSpacing: 5,
-                      childAspectRatio:
-                          MediaQuery.of(context).size.width * 0.3 / 90),
-                  itemBuilder: (_, index) {
-                    return ProductListTile(title: snapshot.productList[index]);
-                  });
-        }),
-      ),
-      bottomNavigationBar: const BottomAppBar(
-        color: blackColor,
-        child: SizedBox(
-          width: double.infinity,
-          height: 50,
-        ),
-      ),
+      body: Consumer<ProjectProvider>(builder: (context, snapshot, child) {
+        return snapshot.loading
+            ? const Center(
+                child: CircularProgressIndicator(),
+              )
+            : ListView.builder(
+                shrinkWrap: true,
+                itemCount: snapshot.productList.length,
+
+                itemBuilder: (_, index) {
+                  return ProductListTile(model: snapshot.productList[index]);
+                });
+      }),
+      // bottomNavigationBar: const BottomAppBar(
+      //   color: blackColor,
+      //   child: SizedBox(
+      //     width: double.infinity,
+      //     height: 50,
+      //   ),
+      // ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: lightBlack,
+
         onPressed: () {
           showAlertDelete1(
             context,
@@ -152,117 +76,141 @@ class _ProductListState extends State<ProductList> {
           child: Icon(Icons.add),
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 }
 
 class ProductListTile extends StatelessWidget {
-  final ProjectModel title;
-  const ProductListTile({Key? key, required this.title}) : super(key: key);
+  final ProjectModel model;
+  const ProductListTile({Key? key, required this.model}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    var p=Provider.of<ProjectProvider>(context,listen: false);
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Container(
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(5), color: blackColor),
+      child: Card(
+        elevation: 10,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15)
+        ),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text(
-                title.name,
-                style: const TextStyle(
-                    color: textColor,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(model.name,style: Theme.of(context).textTheme.headline6?.copyWith(fontWeight: FontWeight.bold,color: Colors.black),),
+                  RichText(
+                    text: TextSpan(
+                      text: 'Est. Value ',
+                      style: DefaultTextStyle.of(context).style,
+                      children:  <TextSpan>[
+                        TextSpan(text: '${model.estProjectValue}', style:const TextStyle(fontWeight: FontWeight.bold,color: Colors.redAccent)),
+
+                      ],
+                    ),
+                  )
+                ],
               ),
             ),
-            spacer(5),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Padding(
-                //   padding: const EdgeInsets.all(4.0),
-                //   child: Text(
-                //     title.salesRate.toString(),
-                //     style: const TextStyle(
-                //         color: textColor,
-                //         fontWeight: FontWeight.bold,
-                //         fontSize: 19),
-                //   ),
-                // ),
-                Padding(
-                  padding: const EdgeInsets.all(4.0),
-                  child: Text(
-                    'est value ${title.estProjectValue}',
-                    style: const TextStyle(
-                        color: textColor,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 17,
+            Padding(
+             padding: const EdgeInsets.all(8.0),
+             child: Row(
+               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+               children: [
+                 RichText(
+                   text: TextSpan(
+                     text: 'Client Name ',
+                     style: DefaultTextStyle.of(context).style,
+                     children:  <TextSpan>[
+                       TextSpan(text: model.client.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+                     ],
+                   ),
+                 ),
+                 RichText(
+                   text: TextSpan(
+                     text: 'Phone ',
+                     style: DefaultTextStyle.of(context).style,
+                     children:  <TextSpan>[
+                       TextSpan(text: model.client.phone, style: const TextStyle(fontWeight: FontWeight.bold)),
+                     ],
+                   ),
+                 ),
+               ],
+             ),
+           ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  RichText(
+                    text: TextSpan(
+                      text: 'Start Date ',
+                      style: DefaultTextStyle.of(context).style,
+                      children:  <TextSpan>[
+                        TextSpan(text: DateFormat('dd-MM-yyyy').format(model.startDate), style: const TextStyle(fontWeight: FontWeight.bold)),
 
-                        decorationColor: textColor,
-                        decorationStyle: TextDecorationStyle.solid),
+                      ],
+                    ),
                   ),
-                )
-              ],
+                  RichText(
+                    text: TextSpan(
+                      text: 'Dead Line ',
+                      style: DefaultTextStyle.of(context).style,
+                      children:  <TextSpan>[
+                        TextSpan(text: DateFormat('dd-MM-yyyy').format(model.deadLine), style: const TextStyle(fontWeight: FontWeight.bold,color: Colors.redAccent)),
+
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  RichText(
+                    text: TextSpan(
+                      text: 'Status ',
+                      style: DefaultTextStyle.of(context).style,
+                      children:  <TextSpan>[
+                        TextSpan(text: model.status, style: TextStyle(fontWeight: FontWeight.bold,color: model.status=="COMPLETED"?Colors.green:Colors.black)),
+
+                      ],
+                    ),
+                  ),
+                  model.status=="ON GOING"?     RichText(
+                    text: TextSpan(
+                      text: 'Remaining Days ',
+                      style: DefaultTextStyle.of(context).style,
+                      children:  <TextSpan>[
+                        TextSpan(text: '${model.startDate.difference(model.deadLine).inDays}', style: TextStyle(fontWeight: FontWeight.bold,color: model.startDate.difference(model.deadLine).inDays<10?Colors.red:Colors.black)),
+
+                      ],
+                    ),
+                  ):Container(),
+                ],
+              ),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                InkWell(
-                  onTap: () {
-                    Provider.of<ProjectProvider>(context, listen: false)
-                        .delete(title, context);
-                  },
-                  child: Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: lightBlack),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: SvgPicture.asset(
-                          'assets/icons/trash.svg',
-                          width: 20,
-                          height: 20,
-                          color: whiteColor,
-                        ),
-                      )),
-                ),
-                InkWell(
-                  onTap: () {
-                    showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        builder: (_) {
-                          return Container(
-                              height: MediaQuery.of(context).size.height * 0.8,
-                              child: AddTreatments(
-                                model: title,
-                              ));
-                        });
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        color: lightBlack),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: SvgPicture.asset(
-                        'assets/icons/edit.svg',
-                        width: 20,
-                        height: 20,
-                        color: whiteColor,
-                      ),
-                    ),
-                  ),
-                ),
+                IconButton(onPressed: (){
+                  p.delete(model, context);
+                },
+                icon: const Icon(Icons.delete)),
+                IconButton(onPressed: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (_)=> AddTreatments(
+                    model: model,
+                  )));
+                },
+                icon: const Icon(Icons.edit)),
               ],
             )
           ],

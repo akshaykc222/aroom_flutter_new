@@ -2,54 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:seed_sales/constants.dart';
+import 'package:seed_sales/screens/categories/componts/categoryform.dart';
+import 'package:seed_sales/screens/categories/models/categories_model.dart';
+import 'package:seed_sales/screens/subcategory/components/subcategory_form.dart';
+import 'package:seed_sales/screens/subcategory/models/sub_category.dart';
 import 'package:seed_sales/sizeconfig.dart';
 
 PreferredSizeWidget appBar(
     String title, List<Widget> widgetList, BuildContext context) {
-  return PreferredSize(
-    preferredSize: const Size(double.infinity, 100),
-    child: Container(
-      decoration: const BoxDecoration(boxShadow: [
-        BoxShadow(color: Colors.black12, spreadRadius: 5, blurRadius: 2)
-      ]),
-      width: double.infinity,
-      height: 80,
-      child: Container(
-        decoration: const BoxDecoration(
-          color: blackColor,
-        ),
-        child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              InkWell(
-                onTap: () {
-                  Navigator.maybePop(context);
-                },
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  child: Container(
-                    decoration: const BoxDecoration(
-                        color: lightBlack, shape: BoxShape.circle),
-                    child: const Icon(
-                      Icons.arrow_back,
-                      size: 30,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  title,
-                  style: const TextStyle(fontSize: 25, color: Colors.white),
-                ),
-              ),
-            ]),
-      ),
-    ),
+  return AppBar(
+    title: Text(title),
   );
 }
 
@@ -84,7 +46,7 @@ Widget defaultButton(double width, String title) {
     width: width,
     height: 50,
     decoration: BoxDecoration(
-        color: blackColor, borderRadius: BorderRadius.circular(15)),
+        color: Colors.blue, borderRadius: BorderRadius.circular(15)),
     child: Center(
       child: Text(
         title,
@@ -94,35 +56,38 @@ Widget defaultButton(double width, String title) {
   );
 }
 
-Widget columUserTextFileds(String label, String hint, TextInputType keyboard,
-    TextEditingController controller) {
+Widget columnUserTextFields(String label, String hint, TextInputType keyboard,
+    TextEditingController controller,
+    {bool? required}) {
   return Padding(
     padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
     child: TextFormField(
       validator: (value) {
-        if (value!.isEmpty) {
-          return "Please Enter value for $hint";
+        if (required == null) {
+          if (value!.isEmpty) {
+            return "Please Enter value for $hint";
+          }
         }
+
         return null;
       },
       controller: controller,
       keyboardType: keyboard,
-
-      style: const TextStyle(color: textColor),
+      style: const TextStyle(color: blackColor),
       decoration: InputDecoration(
           labelText: label,
           labelStyle: const TextStyle(
-            color: whiteColor,
+            color: blackColor,
             fontSize: 13,
           ),
           floatingLabelBehavior: FloatingLabelBehavior.auto,
           hintText: hint,
-          hintStyle: const TextStyle(color: textColor),
+          hintStyle: const TextStyle(color: blackColor),
           filled: true,
           enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.red.shade500, width: 1)),
+              borderSide: BorderSide(color: Colors.grey.shade500, width: 0.5)),
           focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.grey.shade500, width: 1)),
+              borderSide: BorderSide(color: Colors.red.shade500, width: 0.5)),
           disabledBorder: const UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.white30)),
           border: const UnderlineInputBorder(
@@ -131,7 +96,7 @@ Widget columUserTextFileds(String label, String hint, TextInputType keyboard,
   );
 }
 
-Widget columUserTextFiledsBlack(String label, String hint,
+Widget columnUserTextFilledBlack(String label, String hint,
     TextInputType keyboard, TextEditingController controller) {
   return Padding(
     padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 25),
@@ -153,28 +118,27 @@ Widget columUserTextFiledsBlack(String label, String hint,
           hintText: hint,
           hintStyle: const TextStyle(color: blackColor),
           filled: true,
-          enabledBorder:  OutlineInputBorder(
+          enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            borderSide:const BorderSide(
+            borderSide: const BorderSide(
               color: blackColor,
               width: 0.5,
             ),
           ),
-          disabledBorder:OutlineInputBorder(
+          disabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            borderSide:const BorderSide(
+            borderSide: const BorderSide(
               color: blackColor,
               width: 0.5,
             ),
           ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            borderSide:const BorderSide(
+            borderSide: const BorderSide(
               color: blackColor,
               width: 0.5,
             ),
-          )
-      ),
+          )),
     ),
   );
 }
@@ -253,6 +217,7 @@ PreferredSize appBarWithSearch(
     ),
   );
 }
+
 InputDecoration defaultDecorationDropDown(String title, String hint) {
   return InputDecoration(
     floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -263,8 +228,10 @@ InputDecoration defaultDecorationDropDown(String title, String hint) {
     fillColor: Colors.white70,
     labelText: title,
     hintText: hint,
-
-   suffixIcon: const Icon(Icons.arrow_drop_down,color: Colors.white,),
+    suffixIcon: const Icon(
+      Icons.arrow_drop_down,
+      color: Colors.white,
+    ),
     labelStyle: const TextStyle(
       color: whiteColor,
       fontSize: 13,
@@ -272,22 +239,60 @@ InputDecoration defaultDecorationDropDown(String title, String hint) {
   );
 }
 
-
 InputDecoration defaultDecoration(String title, String hint) {
   return InputDecoration(
     floatingLabelBehavior: FloatingLabelBehavior.auto,
     enabledBorder: UnderlineInputBorder(
-        borderSide: BorderSide(color: Colors.red.shade500, width: 1)),
+        borderSide: BorderSide(color: Colors.grey.shade500, width: 0.5)),
     focusedBorder: UnderlineInputBorder(
-        borderSide: BorderSide(color: Colors.grey.shade500, width: 1)),
+        borderSide: BorderSide(color: Colors.red.shade500, width: 0.5)),
     fillColor: Colors.white70,
     labelText: title,
     hintText: hint,
-
-    helperStyle: TextStyle(color: Colors.white),
+    helperStyle: const TextStyle(color: Colors.black),
     labelStyle: const TextStyle(
-      color: whiteColor,
+      color: Colors.black,
       fontSize: 13,
     ),
   );
+}
+
+void showCategoryAdd(BuildContext context) {
+  showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      builder: (_) {
+        return Padding(
+          padding:
+              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+          child: Wrap(
+            children: const [CategoryForm()],
+          ),
+        );
+      });
+}
+
+void showSubCategoryAdd(BuildContext context, CategoriesModel model) {
+  showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      builder: (_) {
+        return Padding(
+          padding:
+              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+          child: Wrap(
+            children: [
+              SubCategoryForm(
+                category: model,
+              )
+            ],
+          ),
+        );
+      });
 }
