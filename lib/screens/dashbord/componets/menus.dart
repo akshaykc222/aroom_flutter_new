@@ -1,5 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:seed_sales/componets.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../constants.dart';
 
@@ -73,6 +77,18 @@ class _AdminMenuState extends State<AdminMenu> {
           title: "Enquiry",
           function: () {
             Navigator.pushNamed(context, enquiry);
+          }),
+      MenuCard(
+          icon: Icons.logout,
+          title: "Logout",
+          function: () async {
+            SharedPreferences pref = await SharedPreferences.getInstance();
+            pref.clear();
+            if (Platform.isAndroid) {
+              SystemNavigator.pop();
+            } else if (Platform.isIOS) {
+              exit(0);
+            }
           }),
     ];
     super.initState();

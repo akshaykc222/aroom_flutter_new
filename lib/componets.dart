@@ -10,7 +10,18 @@ import 'package:seed_sales/sizeconfig.dart';
 PreferredSizeWidget appBar(
     String title, List<Widget> widgetList, BuildContext context) {
   return AppBar(
-    title: Text(title),
+    title: Row(
+      children: [
+        Image.asset(
+          'assets/icons/logo.png',
+          width: 50,
+          height: 50,
+          color: Colors.white,
+          fit: BoxFit.fill,
+        ),
+        Text(title),
+      ],
+    ),
   );
 }
 

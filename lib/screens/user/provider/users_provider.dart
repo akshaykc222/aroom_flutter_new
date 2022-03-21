@@ -300,6 +300,9 @@ class UserProviderNew with ChangeNotifier {
   }
 
   void addUser(UserModel model, BuildContext context) async {
+    if (token == "") {
+      await getToken();
+    }
     var header = {
       "Authorization": "Token $token",
       "Access-Control-Allow-Origin": "*",

@@ -35,8 +35,8 @@ class _DesignationsState extends State<Designations> {
                   key: _formKey,
                   child: Column(
                     children: [
-                      columnUserTextFilledBlack("Designation title", "Designation",
-                          TextInputType.name, designationText01),
+                      columnUserTextFilledBlack("Designation title",
+                          "Designation", TextInputType.name, designationText01),
                       spacer(10),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -49,7 +49,8 @@ class _DesignationsState extends State<Designations> {
                                         listen: false)
                                     .addBusiness(
                                         DesingationModel(
-                                            designation: designationText01.text),
+                                            designation:
+                                                designationText01.text),
                                         context);
                               },
                               child: defaultButton(
@@ -77,25 +78,20 @@ class _DesignationsState extends State<Designations> {
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
+    return Scaffold(
       extendBody: true,
       appBar: appBar("Designations", [], context),
       resizeToAvoidBottomInset: false,
-      body: Container(
-        color: lightBlack,
-        child:const ListDesingations(),
-      ),
+      body: const ListDesingations(),
       bottomNavigationBar: const BottomAppBar(
-        color: blackColor,
         child: SizedBox(
           width: double.infinity,
           height: 50,
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: lightBlack,
         onPressed: () {
-            showAddAlert01();
+          showAddAlert01();
         },
         child: const Center(
           child: Icon(Icons.add),

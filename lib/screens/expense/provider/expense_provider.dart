@@ -22,7 +22,7 @@ class ExpenseProvider with ChangeNotifier {
     loading = true;
     notifyListeners();
     if (token == "") {
-      getToken();
+      await getToken();
     }
     print(token);
     var headers = {'Authorization': 'Token $token'};

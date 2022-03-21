@@ -58,14 +58,12 @@ class _UserListState extends State<UserList> {
                   });
         }),
         bottomNavigationBar: const BottomAppBar(
-          color: blackColor,
           child: SizedBox(
             width: double.infinity,
             height: 50,
           ),
         ),
         floatingActionButton: FloatingActionButton(
-          backgroundColor: lightBlack,
           onPressed: () {
             Navigator.push(context,
                 MaterialPageRoute(builder: (_) => const UserCreation()));
