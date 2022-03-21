@@ -5,10 +5,8 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:overlay_support/overlay_support.dart';
 import 'package:provider/provider.dart';
 import 'package:seed_sales/constants.dart';
-import 'package:seed_sales/push_notification_service.dart';
 import 'package:seed_sales/router.dart';
 import 'package:seed_sales/screens/Desingation/provider/desingation_provider.dart';
 import 'package:seed_sales/screens/categories/provider/category_provider.dart';
@@ -17,19 +15,17 @@ import 'package:seed_sales/screens/dashbord/body.dart';
 import 'package:seed_sales/screens/dashbord/provider/assigned_business_provider.dart';
 import 'package:seed_sales/screens/dashbord/provider/dashboard_provider.dart';
 import 'package:seed_sales/screens/enquiry/provider/appointment_provider.dart';
+import 'package:seed_sales/screens/expense/provider/expense_provider.dart';
 import 'package:seed_sales/screens/income/provider/income_provider.dart';
 import 'package:seed_sales/screens/login/body.dart';
 import 'package:seed_sales/screens/login/provider/login_provider.dart';
 import 'package:seed_sales/screens/products/provider/products_provider.dart';
-import 'package:seed_sales/screens/pus_notification.dart';
 import 'package:seed_sales/screens/roles/provider/role_provider.dart';
 import 'package:seed_sales/screens/subcategory/provider/sub_category_provider.dart';
 import 'package:seed_sales/screens/tax/provider/tax_provider.dart';
 import 'package:seed_sales/screens/user/provider/users_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:workmanager/workmanager.dart';
 
-import 'notification.dart';
 import 'screens/bussiness/provider/business_provider.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -133,11 +129,12 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(create: (_) => AppointmentProvider()),
         ChangeNotifierProvider(create: (_) => TaxProvider()),
         ChangeNotifierProvider(create: (_) => AssignedBussinessProvider()),
-        ChangeNotifierProvider(create: (_) => IncomeProvider())
+        ChangeNotifierProvider(create: (_) => IncomeProvider()),
+        ChangeNotifierProvider(create: (_) => ExpenseProvider())
       ],
       child: MaterialApp(
         color: Colors.white,
-        title: 'Body Perfect',
+        title: 'Aroom',
         theme: ThemeData(
             textTheme: GoogleFonts.bellezaTextTheme(
               Theme.of(context).textTheme,

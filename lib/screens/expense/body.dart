@@ -1,32 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:seed_sales/componets.dart';
-import 'package:seed_sales/screens/income/componets/add.dart';
+import 'package:seed_sales/screens/expense/components/expense_add.dart';
+import 'package:seed_sales/screens/expense/provider/expense_provider.dart';
 import 'package:seed_sales/screens/income/model/income_model.dart';
-import 'package:seed_sales/screens/income/provider/income_provider.dart';
-import 'package:seed_sales/screens/products/provider/products_provider.dart';
 
-class Income extends StatefulWidget {
-  const Income({Key? key}) : super(key: key);
+import '../products/provider/products_provider.dart';
 
-  @override
-  State<Income> createState() => _IncomeState();
-}
-
-class _IncomeState extends State<Income> {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
-      Provider.of<IncomeProvider>(context, listen: false).get();
-    });
-  }
+class Expense extends StatelessWidget {
+  const Expense({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+      Provider.of<ExpenseProvider>(context, listen: false).get();
+    });
     return Scaffold(
-      appBar: appBar('Income', [], context),
-      body: Consumer<IncomeProvider>(builder: (context, snapshot, child) {
+      appBar: AppBar(
+        title: const Text('Expense'),
+      ),
+      body: Consumer<ExpenseProvider>(builder: (context, snapshot, child) {
         return snapshot.loading
             ? const Center(
                 child: CircularProgressIndicator(
@@ -37,38 +29,26 @@ class _IncomeState extends State<Income> {
                 scrollDirection: Axis.vertical,
                 shrinkWrap: true,
                 physics: const BouncingScrollPhysics(),
-                itemCount: snapshot.incomeList.length,
+                itemCount: snapshot.expenseList.length,
                 itemBuilder: (_, index) {
-                  return IncomeListItem(model: snapshot.incomeList[index]);
+                  return ExpanseListItem(model: snapshot.expenseList[index]);
                 },
               );
       }),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      // bottomNavigationBar: const BottomAppBar(
-      //   color: blackColor,
-      //   child: SizedBox(
-      //     width: double.infinity,
-      //     height: 50,
-      //   ),
-      // ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          //
           Navigator.push(
-              context, MaterialPageRoute(builder: (_) => const IncomeAdd()));
+              context, MaterialPageRoute(builder: (_) => const ExpenseAdd()));
         },
-        child: const Center(
-          child: Icon(Icons.add),
-        ),
+        child: const Icon(Icons.add),
       ),
-      // floatingActionButton: ,
     );
   }
 }
 
-class IncomeListItem extends StatelessWidget {
+class ExpanseListItem extends StatelessWidget {
   final IncomeModel model;
-  const IncomeListItem({Key? key, required this.model}) : super(key: key);
+  const ExpanseListItem({Key? key, required this.model}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -111,7 +91,7 @@ class IncomeListItem extends StatelessWidget {
                   children: [
                     RichText(
                       text: TextSpan(
-                        text: 'Total Income ',
+                        text: 'Total Expense ',
                         style: DefaultTextStyle.of(context).style,
                         children: <TextSpan>[
                           TextSpan(
@@ -133,7 +113,7 @@ class IncomeListItem extends StatelessWidget {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (_) => IncomeAdd(
+                                builder: (_) => ExpenseAdd(
                                       model: model,
                                     )));
                       },

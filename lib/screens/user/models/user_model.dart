@@ -1,7 +1,4 @@
 import 'package:seed_sales/screens/Desingation/models/designation_model.dart';
-import 'package:seed_sales/screens/roles/models/role_model.dart';
-import 'package:seed_sales/screens/roles/models/user_role_model.dart';
-import 'package:seed_sales/screens/user/models/role_models.dart';
 
 import '../../login/model/login_model.dart';
 
@@ -11,7 +8,7 @@ class UserModel {
   String? email;
   String? phone;
   String? password;
-  DesingationModel designation;
+  DesingationModel? designation;
   List<UserRolesFromLogin>? roleList;
   UserModel(
       {this.id,
@@ -20,21 +17,20 @@ class UserModel {
       required this.phone,
       required this.password,
       required this.designation,
-      this.roleList
-     });
+      this.roleList});
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
-
-  
     return UserModel(
-        id: json['id'],
-        name: json['name'],
-        email: json['email'],
-        phone: json['phone'],
-        password: json['password'],
-        designation: DesingationModel.fromJson(json["designation"]),
-        roleList:List<UserRolesFromLogin>.from(json["permissions"].map((x) => UserRolesFromLogin.fromJson(x)))
-       );
+      id: json['id'],
+      name: json['name'],
+      email: json['email'],
+      phone: json['phone'],
+      password: json['password'],
+      designation: json["designation"] == null
+          ? null
+          : DesingationModel.fromJson(json["designation"]),
+      // roleList:List<UserRolesFromLogin>.from(json["permissions"].map((x) => UserRolesFromLogin.fromJson(x)))
+    );
   }
 
   Map<String, dynamic> toJson() {
@@ -43,10 +39,10 @@ class UserModel {
     data['name'] = name;
     data['email'] = email;
     data['phone'] = phone;
-    data['designation'] = designation.id;
+    data['designation'] = designation!.id;
     data['password1'] = password;
     data['password2'] = password;
-    data['permissions']= List<dynamic>.from(roleList!.map((x) => x.toJson()));
+    data['permissions'] = List<dynamic>.from(roleList!.map((x) => x.toJson()));
 
     return data;
   }

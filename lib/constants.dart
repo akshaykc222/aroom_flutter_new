@@ -17,7 +17,7 @@ const String order = "/order";
 const String products = "/products";
 const String enquiry = "/enquiry";
 const String customers = "/customers";
-const String incomeNav="/income";
+const String incomeNav = "/income";
 const String designation = "/Designation";
 const String reports = "/reports";
 const String roleList = "/roleList";
@@ -25,6 +25,7 @@ const String taxNav = "/tax";
 const String unitNav = "/unit";
 const String regionNav = "/region";
 const String loginNav = "/login";
+const String expenseNav = "/expense";
 
 //strings
 const String something = "something went wrong";

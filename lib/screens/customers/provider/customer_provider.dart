@@ -3,10 +3,10 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:seed_sales/screens/categories/models/categories_model.dart';
-import 'package:seed_sales/screens/customers/models/country_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:seed_sales/screens/customers/models/country_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../../constants.dart';
 
 class CustomerProvider with ChangeNotifier {
@@ -15,39 +15,37 @@ class CustomerProvider with ChangeNotifier {
   List<CustomerModel> customerList = [];
   List<CustomerModel> tempList = [];
   List<CustomerModel> customerListWithApproved = [];
-  String selectedLeadSource="Our marketing executives";
-  setLeadSource(String val){
-    selectedLeadSource=val;
+  String selectedLeadSource = "Our marketing executives";
+  setLeadSource(String val) {
+    selectedLeadSource = val;
     notifyListeners();
   }
 
-  List<String> leadSource =[
+  List<String> leadSource = [
     "Our marketing executives",
     "Social networks",
-
   ];
-  String selectedLeadStatus="Attempt to contact";
-  setSelectedLeadStatus(String val){
-    selectedLeadStatus=val;
+  String selectedLeadStatus = "Attempt to contact";
+  setSelectedLeadStatus(String val) {
+    selectedLeadStatus = val;
     notifyListeners();
   }
-  List<String> leadStatus =[
+
+  List<String> leadStatus = [
     "Attempt to contact",
     "Contacted",
     "Not contacted",
     "Qualified",
     "Pre-qualified",
     "Confirmed"
-
   ];
-  String selectedLeadType="Hot";
-  setSelectedLeadType(String val){
-    selectedLeadType=val;
+  String selectedLeadType = "Hot";
+  setSelectedLeadType(String val) {
+    selectedLeadType = val;
     notifyListeners();
   }
-  List<String> leadType=[
-    "Hot","Warm","Cold"
-  ];
+
+  List<String> leadType = ["Hot", "Warm", "Cold"];
   String token = "";
   CustomerProvider() {
     if (token == "") {
@@ -84,10 +82,10 @@ class CustomerProvider with ChangeNotifier {
     notifyListeners();
   }
 
-
-
-  Future<CustomerModel?> getCategoryListWithId(BuildContext context,int id,) async {
-
+  Future<CustomerModel?> getCategoryListWithId(
+    BuildContext context,
+    int id,
+  ) async {
     if (token == "") {
       await getToken();
     }
@@ -104,27 +102,25 @@ class CustomerProvider with ChangeNotifier {
     debugPrint(response.body);
     if (response.statusCode == HttpStatus.ok) {
       Map<String, dynamic> data = json.decode(response.body);
-      CustomerModel cus=CustomerModel.fromJson(data);
-
+      CustomerModel cus = CustomerModel.fromJson(data);
 
       return cus;
     }
     return null;
+  }
 
-
-    }
-
-    //notifyListeners();
+  //notifyListeners();
 
   void getCategoryList(BuildContext context) async {
-    if(customerList.isEmpty){
+    if (customerList.isEmpty) {
       loading = true;
       notifyListeners();
       if (token == "") {
         await getToken();
       }
       customerList.clear();
-      debugPrint("====================customerList==================================");
+      debugPrint(
+          "====================customerList==================================");
       var header = {
         "Authorization": "Token $token",
         HttpHeaders.contentTypeHeader: 'application/json'
@@ -138,7 +134,8 @@ class CustomerProvider with ChangeNotifier {
         Map<String, dynamic> data = json.decode(response.body);
         customerList = List<CustomerModel>.from(
             data["customers"].map((x) => CustomerModel.fromJson(x)));
-        customerListWithApproved=customerList.where((element) => element.status==true).toList();
+        customerListWithApproved =
+            customerList.where((element) => element.status == true).toList();
         loading = false;
 
         notifyListeners();

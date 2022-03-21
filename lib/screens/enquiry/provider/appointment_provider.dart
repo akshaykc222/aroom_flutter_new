@@ -3,14 +3,11 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:seed_sales/constants.dart';
-
 import 'package:seed_sales/screens/categories/models/categories_model.dart';
 import 'package:seed_sales/screens/enquiry/model/appointmentsmodel.dart';
-
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'package:http/http.dart' as http;
 
 class AppointmentProvider with ChangeNotifier {
   bool loading = false;
@@ -20,17 +17,16 @@ class AppointmentProvider with ChangeNotifier {
   List<EnquiryModel> enquiryList = [];
   List<EnquiryModel> tempList = [];
 
-
   String token = "";
   AppointmentProvider() {
     if (token == "") {
       getToken();
     }
   }
-
-
-
-
+  stopLoading() {
+    loading = false;
+    notifyListeners();
+  }
 
   // void searchBusiness(String s) {
   //   initTemp();
@@ -46,17 +42,13 @@ class AppointmentProvider with ChangeNotifier {
   //   notifyListeners();
   // }
 
-
-  void clearTempList(){
+  void clearTempList() {
     tempList.clear();
     notifyListeners();
   }
 
-
-
-
   Future<int> getEnquiry(BuildContext context) async {
-    if(enquiryList.isEmpty){
+    if (enquiryList.isEmpty) {
       loading = true;
       notifyListeners();
       if (token == "") {
@@ -249,7 +241,9 @@ class AppointmentProvider with ChangeNotifier {
     // Navigator.push(
     //     context, MaterialPageRoute(builder: (_) => const Bussiness()));
   }
-  void updateCategoryOneField(BuildContext context, Map<String,dynamic> model,int id) async {
+
+  void updateCategoryOneField(
+      BuildContext context, Map<String, dynamic> model, int id) async {
     loading = true;
     notifyListeners();
     if (token == "") {
@@ -260,11 +254,10 @@ class AppointmentProvider with ChangeNotifier {
       HttpHeaders.contentTypeHeader: 'application/json'
     };
 
-
     final uri = Uri.parse('https://$baseUrl/api/v1/enquiry/$id/');
     debugPrint(uri.toString());
     final response =
-    await http.put(uri, headers: header, body: jsonEncode(model));
+        await http.put(uri, headers: header, body: jsonEncode(model));
 
     if (response.statusCode == HttpStatus.ok) {
       loading = false;
@@ -333,7 +326,8 @@ class AppointmentProvider with ChangeNotifier {
       }
     }
   }
-  void updateCategory(BuildContext context, EnquiryModel model) async {
+
+  void updateEnquiry(BuildContext context, EnquiryModel model) async {
     loading = true;
     notifyListeners();
     if (token == "") {
@@ -418,8 +412,92 @@ class AppointmentProvider with ChangeNotifier {
       }
     }
   }
-//time slot
 
+  void deleteEnquiry(BuildContext context, EnquiryModel model) async {
+    loading = true;
+    notifyListeners();
+    if (token == "") {
+      await getToken();
+    }
+    var header = {
+      "Authorization": "Token $token",
+      HttpHeaders.contentTypeHeader: 'application/json'
+    };
+    var body = model.toJson();
+    debugPrint(body.toString());
+    final uri = Uri.parse('https://$baseUrl/api/v1/enquiry/${model.id}/');
+    debugPrint(uri.toString());
+    final response = await http.delete(uri, headers: header);
+
+    if (response.statusCode == HttpStatus.noContent) {
+      loading = false;
+      notifyListeners();
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return CupertinoAlertDialog(
+              title: const Text('Deleted'),
+              content: const Text(' Deleted successfully'),
+              actions: <Widget>[
+                CupertinoDialogAction(
+                  onPressed: () {
+                    Navigator.pop(context);
+
+                    loading = false;
+                    notifyListeners();
+                    enquiryList.clear();
+                    getEnquiry(context);
+                  },
+                  child: const Text('Ok'),
+                ),
+              ],
+            );
+          });
+    } else if (response.statusCode == HttpStatus.badRequest) {
+      loading = false;
+      notifyListeners();
+      Map<String, dynamic> data = json.decode(response.body);
+      try {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return CupertinoAlertDialog(
+                title: const Text('Failed'),
+                content: Text(data['error']),
+                actions: <Widget>[
+                  CupertinoDialogAction(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      // Navigator.pushReplacementNamed(context, business);
+                    },
+                    child: const Text('Ok'),
+                  ),
+                ],
+              );
+            });
+      } catch (e) {
+        loading = false;
+        notifyListeners();
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return CupertinoAlertDialog(
+                title: const Text('Failed'),
+                content: const Text(something),
+                actions: <Widget>[
+                  CupertinoDialogAction(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Ok'),
+                  ),
+                ],
+              );
+            });
+      }
+    }
+  }
+//time slot
 
   // void getTimeSlots(BuildContext context,String date) async {
   //   loading = true;
@@ -494,7 +572,6 @@ class AppointmentProvider with ChangeNotifier {
   //   }
   //   //notifyListeners();
   // }
-
 
   //=
 }

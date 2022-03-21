@@ -1,19 +1,16 @@
 import 'dart:convert';
 import 'dart:developer';
-
 import 'dart:io';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:seed_sales/constants.dart' as constant;
-import 'package:seed_sales/screens/bussiness/models/bussinessmode.dart';
-import 'package:seed_sales/screens/user/componets/user_list.dart';
-import 'package:seed_sales/screens/user/models/role_models.dart';
-import 'package:seed_sales/screens/user/models/user_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:seed_sales/constants.dart' as constant;
+import 'package:seed_sales/screens/user/componets/user_list.dart';
+import 'package:seed_sales/screens/user/models/user_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:collection/collection.dart';
 
 import '../../../constants.dart';
 import '../../login/model/login_model.dart';
@@ -75,25 +72,25 @@ class UserProviderNew with ChangeNotifier {
     notifyListeners();
   }
 
-  void removeFromList(int businessId) {
-    roleList.removeWhere((element) => element.business.id == businessId);
-    notifyListeners();
-  }
+  // void removeFromList(int businessId) {
+  //   roleList.removeWhere((element) => element.business.id == businessId);
+  //   notifyListeners();
+  // }
 
-  void addToRoleList(UserRolesFromLogin role, BuildContext context) {
-    UserRolesFromLogin? existingItem = roleList.firstWhereOrNull(
-      (element) => element.business == role.business,
-    );
-    if (existingItem == null) {
-      roleList.add(role);
-    } else {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Already exists')));
-    }
-
-    print(roleList.length.toString());
-    notifyListeners();
-  }
+  // void addToRoleList(UserRolesFromLogin role, BuildContext context) {
+  //   UserRolesFromLogin? existingItem = roleList.firstWhereOrNull(
+  //     (element) => element.business == role.business,
+  //   );
+  //   if (existingItem == null) {
+  //     roleList.add(role);
+  //   } else {
+  //     ScaffoldMessenger.of(context)
+  //         .showSnackBar(const SnackBar(content: Text('Already exists')));
+  //   }
+  //
+  //   print(roleList.length.toString());
+  //   notifyListeners();
+  // }
 
   void updateToken(String tf) async {
     if (token == "") {

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:seed_sales/screens/categories/body.dart';
 import 'package:seed_sales/screens/customers/body.dart';
-
 import 'package:seed_sales/screens/dashbord/body.dart';
 import 'package:seed_sales/screens/enquiry/body.dart';
+import 'package:seed_sales/screens/expense/body.dart';
 import 'package:seed_sales/screens/income/body.dart';
 import 'package:seed_sales/screens/login/body.dart';
 import 'package:seed_sales/screens/products/componets/product_list.dart';
@@ -11,17 +11,13 @@ import 'package:seed_sales/screens/region/body.dart';
 import 'package:seed_sales/screens/roles/body.dart';
 import 'package:seed_sales/screens/roles/componets/roles_list.dart';
 import 'package:seed_sales/screens/services/componets/order.dart';
-import 'package:seed_sales/screens/services/componets/services.dart';
 import 'package:seed_sales/screens/tax/body.dart';
 import 'package:seed_sales/screens/unint/body.dart';
 import 'package:seed_sales/screens/user/componets/user_list.dart';
 
 import 'constants.dart';
 import 'screens/Desingation/body.dart';
-
 import 'screens/bussiness/componets/list_bussiness.dart';
-import 'screens/products/body.dart';
-
 import 'screens/user/body.dart';
 
 class RouterPage {
@@ -62,7 +58,9 @@ class RouterPage {
       case category:
         return MaterialPageRoute(builder: (_) => const Categories());
       case incomeNav:
-        return MaterialPageRoute(builder: (_)=>const Income());
+        return MaterialPageRoute(builder: (_) => const Income());
+      case expenseNav:
+        return MaterialPageRoute(builder: (_) => const Expense());
       default:
         return MaterialPageRoute(
             builder: (_) => Scaffold(

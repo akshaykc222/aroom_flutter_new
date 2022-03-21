@@ -6,8 +6,8 @@ import 'package:seed_sales/constants.dart';
 import 'package:seed_sales/screens/income/model/income_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class IncomeProvider with ChangeNotifier {
-  List<IncomeModel> incomeList = [];
+class ExpenseProvider with ChangeNotifier {
+  List<IncomeModel> expenseList = [];
   String token = "";
   bool loading = false;
 
@@ -27,7 +27,7 @@ class IncomeProvider with ChangeNotifier {
     print(token);
     var headers = {'Authorization': 'Token $token'};
     var request =
-        http.Request('GET', Uri.parse('https://$baseUrl/api/v1/incomes/'));
+        http.Request('GET', Uri.parse('https://$baseUrl/api/v1/expense/'));
 
     request.headers.addAll(headers);
 
@@ -36,9 +36,10 @@ class IncomeProvider with ChangeNotifier {
     if (response.statusCode == 200) {
       Map<String, dynamic> data =
           jsonDecode(await response.stream.bytesToString());
+      print(data);
       if (data.isNotEmpty) {
-        incomeList = List<IncomeModel>.from(
-            data['incomes'].map((x) => IncomeModel.fromJson(x)));
+        expenseList = List<IncomeModel>.from(
+            data['expense'].map((x) => IncomeModel.fromJson(x)));
         notifyListeners();
       }
       loading = false;
@@ -69,7 +70,8 @@ class IncomeProvider with ChangeNotifier {
       'Accept': 'application/json'
     };
     var request =
-        http.Request('POST', Uri.parse('https://$baseUrl/api/v1/incomes/'));
+        http.Request('POST', Uri.parse('https://$baseUrl/api/v1/expense/'));
+    debugPrint('https://$baseUrl/api/v1/expense/');
     request.body = jsonEncode(body.toJson());
     request.headers.addAll(headers);
 
@@ -77,7 +79,7 @@ class IncomeProvider with ChangeNotifier {
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       loading = false;
-      incomeList.clear();
+      expenseList.clear();
       get();
       notifyListeners();
       ScaffoldMessenger.of(context)
@@ -89,9 +91,16 @@ class IncomeProvider with ChangeNotifier {
     } else {
       loading = false;
       notifyListeners();
-      debugPrint(await response.stream.bytesToString());
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(response.reasonPhrase.toString())));
+      var v = await response.stream.bytesToString();
+      print(v);
+      Map<String, dynamic> data = jsonDecode(v);
+      if (data.containsKey('project')) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Project Already exists')));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(response.reasonPhrase.toString())));
+      }
     }
   }
 
@@ -108,7 +117,7 @@ class IncomeProvider with ChangeNotifier {
       'Accept': 'application/json'
     };
     var request = http.Request(
-        'PUT', Uri.parse('https://$baseUrl/api/v1/incomes/${body.id}/'));
+        'PUT', Uri.parse('https://$baseUrl/api/v1/expense/${body.id}/'));
     request.body = jsonEncode(body.toJson());
     print(body.toJson());
     request.headers.addAll(headers);
@@ -118,26 +127,21 @@ class IncomeProvider with ChangeNotifier {
     if (response.statusCode == 200) {
       loading = false;
       notifyListeners();
-      incomeList.clear();
+      expenseList.clear();
       get();
+      Navigator.pop(context);
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text('Updated')));
-      Navigator.pop(context);
+
       // Navigator.pushReplacementNamed(context, incomeNav).then((value) =>
       //     ScaffoldMessenger.of(context)
       //         .showSnackBar(const SnackBar(content: Text('Added'))));
     } else {
       loading = false;
       notifyListeners();
-      Map<String, dynamic> data =
-          jsonDecode(await response.stream.bytesToString());
-      if (data.containsKey('project')) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Project Already exists')));
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(response.reasonPhrase.toString())));
-      }
+      debugPrint(await response.stream.bytesToString());
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(response.reasonPhrase.toString())));
     }
   }
 }

@@ -4,20 +4,21 @@ import 'package:provider/provider.dart';
 import 'package:seed_sales/componets.dart';
 import 'package:seed_sales/screens/customers/models/country_model.dart';
 import 'package:seed_sales/screens/customers/provider/customer_provider.dart';
+import 'package:seed_sales/screens/expense/provider/expense_provider.dart';
 import 'package:seed_sales/screens/income/model/income_model.dart';
 import 'package:seed_sales/screens/income/provider/income_provider.dart';
 import 'package:seed_sales/screens/products/model/project_model.dart';
 import 'package:seed_sales/screens/products/provider/products_provider.dart';
 
-class IncomeAdd extends StatefulWidget {
+class ExpenseAdd extends StatefulWidget {
   final IncomeModel? model;
-  const IncomeAdd({Key? key, this.model}) : super(key: key);
+  const ExpenseAdd({Key? key, this.model}) : super(key: key);
 
   @override
-  State<IncomeAdd> createState() => _IncomeAddState();
+  State<ExpenseAdd> createState() => _ExpenseAddState();
 }
 
-class _IncomeAddState extends State<IncomeAdd> {
+class _ExpenseAddState extends State<ExpenseAdd> {
   update() {
     var p = Provider.of<ProjectProvider>(context, listen: false);
     var c = Provider.of<CustomerProvider>(context, listen: false);
@@ -191,7 +192,7 @@ class _IncomeAddState extends State<IncomeAdd> {
                             child: RichText(
                               text: TextSpan(
                                 text:
-                                    'Total amount received for ${widget.model!.project.name} \t',
+                                    'Total amount Spend for ${widget.model!.project.name} \t',
                                 style: const TextStyle(
                                     color: Colors.black,
                                     fontSize: 16,
@@ -232,18 +233,18 @@ class _IncomeAddState extends State<IncomeAdd> {
                 }),
               ),
               columnUserTextFields(
-                  'Income amount',
-                  'Income amount',
+                  'Expense amount',
+                  'Expense amount',
                   const TextInputType.numberWithOptions(decimal: true),
                   amountController),
-              columnUserTextFields('Narration', 'Narration',
+              columnUserTextFields('Remarks', 'Remarks',
                   TextInputType.multiline, narrationController,
                   required: true),
               spacer(20),
               widget.model != null
                   ? PaymentHistoryList(model: widget.model!.paymentHistory)
                   : Container(),
-              Consumer<IncomeProvider>(builder: (context, snapshot, child) {
+              Consumer<ExpenseProvider>(builder: (context, snapshot, child) {
                 return InkWell(
                     onTap: () {
                       if (formKey.currentState!.validate()) {

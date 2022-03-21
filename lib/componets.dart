@@ -5,7 +5,6 @@ import 'package:seed_sales/constants.dart';
 import 'package:seed_sales/screens/categories/componts/categoryform.dart';
 import 'package:seed_sales/screens/categories/models/categories_model.dart';
 import 'package:seed_sales/screens/subcategory/components/subcategory_form.dart';
-import 'package:seed_sales/screens/subcategory/models/sub_category.dart';
 import 'package:seed_sales/sizeconfig.dart';
 
 PreferredSizeWidget appBar(
@@ -58,10 +57,11 @@ Widget defaultButton(double width, String title) {
 
 Widget columnUserTextFields(String label, String hint, TextInputType keyboard,
     TextEditingController controller,
-    {bool? required}) {
+    {bool? required, int? maxLines}) {
   return Padding(
     padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
     child: TextFormField(
+      maxLines: maxLines,
       validator: (value) {
         if (required == null) {
           if (value!.isEmpty) {

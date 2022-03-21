@@ -231,6 +231,9 @@ class _CustomerFormState extends State<CustomerForm> {
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Client'),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
@@ -238,17 +241,17 @@ class _CustomerFormState extends State<CustomerForm> {
             key: formKey,
             child: Column(
               children: [
-                widget.model != null
-                    ? const Text(
-                        'Update Client',
-                        style: TextStyle(color: whiteColor, fontSize: 20),
-                      )
-                    : const Text(
-                        'Create Client',
-                        style: TextStyle(color: whiteColor, fontSize: 20),
-                      ),
+                // widget.model != null
+                //     ? const Text(
+                //         'Update Client',
+                //         style: TextStyle(color: whiteColor, fontSize: 20),
+                //       )
+                //     : const Text(
+                //         'Create Client',
+                //         style: TextStyle(color: whiteColor, fontSize: 20),
+                //       ),
                 columnUserTextFields(
-                    "Enter name", "Title", TextInputType.name, nameController),
+                    "Enter name", "name", TextInputType.name, nameController),
 
                 phoneTextField(
                     "Enter phone",
@@ -272,8 +275,9 @@ class _CustomerFormState extends State<CustomerForm> {
                 columnUserTextFields(
                     "Enter City", "City", TextInputType.name, cityController),
                 columnUserTextFields("Enter address", "address",
-                    TextInputType.streetAddress, addressController),
-                picode("Pin code", "Pin code", TextInputType.number,
+                    TextInputType.streetAddress, addressController,
+                    maxLines: 5),
+                pinCode("Pin code", "Pin code", TextInputType.number,
                     pincodeController),
 
                 spacer(10),
@@ -361,21 +365,21 @@ Widget phoneTextField(String label, String hint, TextInputType keyboard,
       controller: controller,
       keyboardType: TextInputType.phone,
       maxLength: 15,
-      style: const TextStyle(color: textColor),
+      style: const TextStyle(color: Colors.black),
       decoration: InputDecoration(
           labelText: label,
           labelStyle: const TextStyle(
-            color: whiteColor,
+            color: Colors.black,
             fontSize: 13,
           ),
           floatingLabelBehavior: FloatingLabelBehavior.auto,
           hintText: hint,
-          hintStyle: const TextStyle(color: textColor),
+          hintStyle: const TextStyle(color: Colors.black),
           filled: true,
           enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.red.shade500, width: 1)),
+              borderSide: BorderSide(color: Colors.grey.shade500, width: 0.5)),
           focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.grey.shade500, width: 1)),
+              borderSide: BorderSide(color: Colors.red.shade500, width: 0.5)),
           disabledBorder: const UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.white30)),
           border: const UnderlineInputBorder(
@@ -398,23 +402,23 @@ Widget country(String label, String hint, TextInputType keyboard,
       controller: controller,
       keyboardType: keyboard,
       enabled: false,
-      style: const TextStyle(color: textColor),
+      style: const TextStyle(color: Colors.black),
       decoration: InputDecoration(
           labelText: label,
           labelStyle: const TextStyle(
-            color: whiteColor,
+            color: Colors.black,
             fontSize: 13,
           ),
           floatingLabelBehavior: FloatingLabelBehavior.auto,
           hintText: hint,
-          hintStyle: const TextStyle(color: textColor),
+          hintStyle: const TextStyle(color: Colors.black),
           filled: true,
           enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.red.shade500, width: 1)),
+              borderSide: BorderSide(color: Colors.grey.shade500, width: 0.5)),
           focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.grey.shade500, width: 1)),
-          disabledBorder: const UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.white30)),
+              borderSide: BorderSide(color: Colors.red.shade500, width: 0.5)),
+          disabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.grey.shade500, width: 0.5)),
           border: const UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.white30))),
     ),
@@ -458,35 +462,35 @@ Widget expiryDate(String label, String hint, TextInputType keyboard,
   );
 }
 
-Widget picode(String label, String hint, TextInputType keyboard,
+Widget pinCode(String label, String hint, TextInputType keyboard,
     TextEditingController controller) {
   return Padding(
     padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
     child: TextFormField(
       validator: (value) {
         if (value!.isEmpty) {
-          return "Please Enter value for picode";
+          return "Please Enter value for pin code";
         }
         return null;
       },
       maxLength: 12,
       controller: controller,
       keyboardType: keyboard,
-      style: const TextStyle(color: whiteColor),
+      style: const TextStyle(color: Colors.black),
       decoration: InputDecoration(
           labelText: label,
           labelStyle: const TextStyle(
-            color: whiteColor,
+            color: Colors.black,
             fontSize: 13,
           ),
           floatingLabelBehavior: FloatingLabelBehavior.auto,
           hintText: hint,
-          hintStyle: const TextStyle(color: textColor),
+          hintStyle: const TextStyle(color: Colors.black),
           filled: true,
           enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.red.shade500, width: 1)),
+              borderSide: BorderSide(color: Colors.grey.shade500, width: 0.5)),
           focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.grey.shade500, width: 1)),
+              borderSide: BorderSide(color: Colors.red.shade500, width: 0.5)),
           disabledBorder: const UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.white30)),
           border: const UnderlineInputBorder(
@@ -504,17 +508,17 @@ Widget emailWhiteField(String label, String hint, TextInputType keyboard,
         if (value!.isEmpty) {
           return "Please Enter value for email";
         } else if (!emailRegex.hasMatch(value)) {
-          return "invaild email address";
+          return "invalid email address";
         }
         return null;
       },
       controller: controller,
       keyboardType: keyboard,
-      style: const TextStyle(color: whiteColor),
+      style: const TextStyle(color: Colors.black),
       decoration: InputDecoration(
           labelText: label,
           labelStyle: const TextStyle(
-            color: whiteColor,
+            color: Colors.black,
             fontSize: 13,
           ),
           floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -522,9 +526,9 @@ Widget emailWhiteField(String label, String hint, TextInputType keyboard,
           hintStyle: const TextStyle(color: textColor),
           filled: true,
           enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.red.shade500, width: 1)),
+              borderSide: BorderSide(color: Colors.grey.shade500, width: 0.5)),
           focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.grey.shade500, width: 1)),
+              borderSide: BorderSide(color: Colors.red.shade500, width: 0.5)),
           disabledBorder: const UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.white30)),
           border: const UnderlineInputBorder(

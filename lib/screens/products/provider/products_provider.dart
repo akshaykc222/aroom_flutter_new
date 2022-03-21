@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:collection/src/iterable_extensions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:seed_sales/screens/products/model/product_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:seed_sales/screens/income/model/income_model.dart';
 import 'package:seed_sales/screens/products/model/project_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../../constants.dart';
 
 class ProjectProvider with ChangeNotifier {
@@ -18,10 +18,10 @@ class ProjectProvider with ChangeNotifier {
   List<ProjectModel> selectedListForAppoint = [];
   List<ProjectModel> selectedListForAppointGet = [];
   String token = "";
-  double totalPrice=0.0;
+  double totalPrice = 0.0;
   ProjectModel? selectedModel;
-  changeSelectedModel(ProjectModel? model){
-    selectedModel=model;
+  changeSelectedModel(ProjectModel? model) {
+    selectedModel = model;
     notifyListeners();
   }
 
@@ -30,47 +30,44 @@ class ProjectProvider with ChangeNotifier {
       getToken();
     }
   }
-  emptyAppointmentList(){
-    totalPrice=0.0;
+  emptyAppointmentList() {
+    totalPrice = 0.0;
     selectedListForAppoint.clear();
     notifyListeners();
   }
 
-
-
-
-
-    void initTemp() {
-      if (tempList.isEmpty) {
-        tempList = productList;
-        debugPrint(productList.length.toString());
-        notifyListeners();
-      }
-    }
-
-    void retainList() {
-      productList.clear();
-      productList = tempList;
+  void initTemp() {
+    if (tempList.isEmpty) {
+      tempList = productList;
       debugPrint(productList.length.toString());
       notifyListeners();
     }
+  }
 
-    void search(String s) {
-      initTemp();
-      List<ProjectModel> searchList = [];
-      for (int i = 0; i < tempList.length; i++) {
-        ProjectModel m = tempList[i];
-        if (m.name.contains(s)) {
-          searchList.add(m);
-        }
+  void retainList() {
+    productList.clear();
+    productList = tempList;
+    debugPrint(productList.length.toString());
+    notifyListeners();
+  }
+
+  void search(String s) {
+    initTemp();
+    List<ProjectModel> searchList = [];
+    for (int i = 0; i < tempList.length; i++) {
+      ProjectModel m = tempList[i];
+      if (m.name.contains(s)) {
+        searchList.add(m);
       }
-      productList.clear();
-      productList = searchList;
-      notifyListeners();
     }
+    productList.clear();
+    productList = searchList;
+    notifyListeners();
+  }
 
-  void gettemsWithList({required BuildContext context, required List<int> id}) async {
-    if(selectedListForAppointGet.isEmpty){
+  void gettemsWithList(
+      {required BuildContext context, required List<int> id}) async {
+    if (selectedListForAppointGet.isEmpty) {
       print('getting');
       loading = true;
       notifyListeners();
@@ -78,14 +75,14 @@ class ProjectProvider with ChangeNotifier {
         await getToken();
       }
       selectedListForAppointGet.clear();
-      debugPrint("=============================sdfsdfsdfsdfsdfsdfsdfsdfsdfsdfds=========================");
+      debugPrint(
+          "=============================sdfsdfsdfsdfsdfsdfsdfsdfsdfsdfds=========================");
       var header = {
         "Authorization": "Token $token",
         HttpHeaders.contentTypeHeader: 'application/json'
       };
-      for (var element in id)  {
+      for (var element in id) {
         final uri;
-
 
         uri = Uri.parse('https://$baseUrl/api/v1/projects/$element/$element/');
 
@@ -94,7 +91,7 @@ class ProjectProvider with ChangeNotifier {
         debugPrint(response.body);
         if (response.statusCode == HttpStatus.ok) {
           Map<String, dynamic> data = json.decode(response.body);
-          selectedListForAppointGet=List<ProjectModel>.from(
+          selectedListForAppointGet = List<ProjectModel>.from(
               data["projects"].map((x) => ProjectModel.fromJson(x)));
           notifyListeners();
         }
@@ -102,123 +99,52 @@ class ProjectProvider with ChangeNotifier {
       loading = false;
     }
 
-
     // notifyListeners();
     //notifyListeners();
   }
 
-    void get({required BuildContext context, int? id}) async {
-      loading = true;
-      notifyListeners();
-      if (token == "") {
-        await getToken();
-      }
-      productList.clear();
-      debugPrint("======================================================");
-      var header = {
-        "Authorization": "Token $token",
-        HttpHeaders.contentTypeHeader: 'application/json'
-      };
-
-      final uri;
-
-      id != null
-          ? uri = Uri.parse('https://$baseUrl/api/v1/projects/$id/')
-          : uri = Uri.parse('https://$baseUrl/api/v1/projects/');
-      debugPrint(token);
-      final response = await http.get(uri, headers: header);
-      debugPrint(response.body);
-      if (response.statusCode == HttpStatus.ok) {
-        Map<String, dynamic> data = json.decode(response.body);
-        productList = List<ProjectModel>.from(
-            data["projects"].map((x) => ProjectModel.fromJson(x)));
-        loading = false;
-
-        notifyListeners();
-      } else if (response.statusCode == HttpStatus.badRequest) {
-        loading = false;
-        notifyListeners();
-        Map<String, dynamic> data = json.decode(response.body);
-        try {
-          showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return CupertinoAlertDialog(
-                  title: const Text('Failed'),
-                  content: Text(data['error']),
-                  actions: <Widget>[
-                    CupertinoDialogAction(
-                      onPressed: () {
-
-                        Navigator.pop(context);
-                      },
-                      child: const Text('Ok'),
-                    ),
-                  ],
-                );
-              });
-        } catch (e) {
-          loading = false;
-          notifyListeners();
-          showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return CupertinoAlertDialog(
-                  title: const Text('Failed'),
-                  content: const Text(something),
-                  actions: <Widget>[
-                    CupertinoDialogAction(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: const Text('Ok'),
-                    ),
-                  ],
-                );
-              });
-        }
-      }
-      //notifyListeners();
+  void get({required BuildContext context, int? id}) async {
+    loading = true;
+    notifyListeners();
+    if (token == "") {
+      await getToken();
     }
+    productList.clear();
+    debugPrint("======================================================");
+    var header = {
+      "Authorization": "Token $token",
+      HttpHeaders.contentTypeHeader: 'application/json'
+    };
 
-    Future<void> getToken() async {
-      final SharedPreferences _prefs = await SharedPreferences.getInstance();
+    final uri;
 
-      token = _prefs.getString("token")!;
-    }
+    id != null
+        ? uri = Uri.parse('https://$baseUrl/api/v1/projects/$id/')
+        : uri = Uri.parse('https://$baseUrl/api/v1/projects/');
+    debugPrint(token);
+    final response = await http.get(uri, headers: header);
+    debugPrint(response.body);
+    if (response.statusCode == HttpStatus.ok) {
+      Map<String, dynamic> data = json.decode(response.body);
+      productList = List<ProjectModel>.from(
+          data["projects"].map((x) => ProjectModel.fromJson(x)));
+      loading = false;
 
-    void add(ProjectModel model, BuildContext context) async {
-      loading = true;
       notifyListeners();
-      if (token == "") {
-        await getToken();
-      }
-      var header = {
-        "Authorization": "Token $token",
-        HttpHeaders.contentTypeHeader: 'application/json'
-      };
-      var body = model.toJson();
-      print(body);
-      final uri = Uri.parse('https://$baseUrl/api/v1/projects/');
-      print(uri);
-      final response =
-      await http.post(uri, headers: header, body: jsonEncode(body));
-      print(response.body);
-      if (response.statusCode == HttpStatus.created) {
-        get(context: context);
-        loading = false;
-        notifyListeners();
-        Navigator.pop(context);
+    } else if (response.statusCode == HttpStatus.badRequest) {
+      loading = false;
+      notifyListeners();
+      Map<String, dynamic> data = json.decode(response.body);
+      try {
         showDialog(
             context: context,
             builder: (BuildContext context) {
               return CupertinoAlertDialog(
-                title: const Text('Added'),
-                content: const Text('Project added successfully'),
+                title: const Text('Failed'),
+                content: Text(data['error']),
                 actions: <Widget>[
                   CupertinoDialogAction(
                     onPressed: () {
-                      get(context: context);
                       Navigator.pop(context);
                     },
                     child: const Text('Ok'),
@@ -226,204 +152,284 @@ class ProjectProvider with ChangeNotifier {
                 ],
               );
             });
-      } else if (response.statusCode == HttpStatus.badRequest) {
+      } catch (e) {
         loading = false;
         notifyListeners();
-        Map<String, dynamic> data = json.decode(response.body);
-        try {
-          showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return CupertinoAlertDialog(
-                  title: const Text('Failed'),
-                  content: Text(jsonEncode(data)),
-                  actions: <Widget>[
-                    CupertinoDialogAction(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: const Text('Ok'),
-                    ),
-                  ],
-                );
-              });
-        } catch (e) {
-          loading = false;
-          notifyListeners();
-          showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return CupertinoAlertDialog(
-                  title: const Text('Faild'),
-                  content: const Text(something),
-                  actions: <Widget>[
-                    CupertinoDialogAction(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: const Text('Ok'),
-                    ),
-                  ],
-                );
-              });
-        }
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return CupertinoAlertDialog(
+                title: const Text('Failed'),
+                content: const Text(something),
+                actions: <Widget>[
+                  CupertinoDialogAction(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Ok'),
+                  ),
+                ],
+              );
+            });
       }
     }
+    //notifyListeners();
+  }
 
-    void delete(ProjectModel model, BuildContext context) {
+  Future<void> getToken() async {
+    final SharedPreferences _prefs = await SharedPreferences.getInstance();
+
+    token = _prefs.getString("token")!;
+  }
+
+  void add(ProjectModel model, BuildContext context) async {
+    loading = true;
+    notifyListeners();
+    if (token == "") {
+      await getToken();
+    }
+    var header = {
+      "Authorization": "Token $token",
+      HttpHeaders.contentTypeHeader: 'application/json'
+    };
+    var body = model.toJson();
+    print(body);
+    final uri = Uri.parse('https://$baseUrl/api/v1/projects/');
+    print(uri);
+    final response =
+        await http.post(uri, headers: header, body: jsonEncode(body));
+    print(response.body);
+    if (response.statusCode == HttpStatus.created) {
+      get(context: context);
+      loading = false;
+      notifyListeners();
+      Navigator.pop(context);
       showDialog(
           context: context,
           builder: (BuildContext context) {
             return CupertinoAlertDialog(
-              title: const Text('Delete'),
-              content: const Text('This will delete this Project'),
+              title: const Text('Added'),
+              content: const Text('Project added successfully'),
               actions: <Widget>[
                 CupertinoDialogAction(
-                  onPressed: () async {
-                    //action for delete
-                    var headers = {
-                      'Authorization': 'Token $token',
-                      'Content-Type': 'application/json'
-                    };
-                    var request = http.Request('DELETE', Uri.parse('https://$baseUrl/api/v1/projects/${model.id}/'));
-                    print(Uri.parse('https://$baseUrl/api/v1/projects/${model.id}'));
-                    request.headers.addAll(headers);
-
-                    http.StreamedResponse response = await request.send();
-
-                    if (response.statusCode == 200) {
-                      print(await response.stream.bytesToString());
-                    }
-                    else {
-                    print(response.reasonPhrase);
-                    }
-
-                    productList.remove(model);
-                    notifyListeners();
+                  onPressed: () {
+                    get(context: context);
                     Navigator.pop(context);
                   },
-                  child: const Text('delete'),
+                  child: const Text('Ok'),
                 ),
               ],
             );
           });
-    }
-
-    // CategoriesModel? selectedCategory;
-    //
-    // void setDropDownValue(CategoriesModel value) {
-    //   selectedCategory = value;
-    //   notifyListeners();
-    // }
-
-    // List<BusinessModel> selectedBussinessList = [];
-
-    // void setSelectedBussiness() {
-    //   if (selectedBussinessList.contains(selectedBusiness)) {
-    //     selectedBussinessList.remove(selectedBusiness);
-    //   }
-    //   selectedBussinessList.add(selectedBusiness!);
-    //   notifyListeners();
-    // }
-
-    ProjectModel? updateModel;
-    void updateNavigate(BuildContext context, ProjectModel model) {
-      update = true;
-      updateModel = model;
-      debugPrint(updateModel!.toJson().toString());
+    } else if (response.statusCode == HttpStatus.badRequest) {
+      loading = false;
       notifyListeners();
-      // Navigator.push(
-      //     context, MaterialPageRoute(builder: (_) => const Bussiness()));
-    }
-
-    void updateFun(BuildContext context, ProjectModel model) async {
-      loading = true;
-      notifyListeners();
-      if (token == "") {
-        await getToken();
-      }
-      var header = {
-        "Authorization": "Token $token",
-        HttpHeaders.contentTypeHeader: 'application/json'
-      };
-      var body = model.toJson();
-      print(body);
-      final uri =
-      Uri.parse('https://$baseUrl/api/v1/projects/${model.id}/');
-      print(uri);
-      final response =
-      await http.put(uri, headers: header, body: jsonEncode(body));
-
-      if (response.statusCode == HttpStatus.ok) {
-        loading = false;
-        notifyListeners();
+      Map<String, dynamic> data = json.decode(response.body);
+      try {
         showDialog(
             context: context,
             builder: (BuildContext context) {
               return CupertinoAlertDialog(
-                title: const Text('Updated'),
-                content: const Text('Project updated successfully'),
+                title: const Text('Failed'),
+                content: Text(jsonEncode(data)),
                 actions: <Widget>[
                   CupertinoDialogAction(
                     onPressed: () {
                       Navigator.pop(context);
-                      loading = false;
-                      notifyListeners();
                     },
                     child: const Text('Ok'),
                   ),
                 ],
               );
             });
-      } else if (response.statusCode == HttpStatus.badRequest) {
+      } catch (e) {
         loading = false;
         notifyListeners();
-        Map<String, dynamic> data = json.decode(response.body);
-        try {
-          showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return CupertinoAlertDialog(
-                  title: const Text('Failed'),
-                  content: Text(data['error']),
-                  actions: <Widget>[
-                    CupertinoDialogAction(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        // Navigator.pushReplacementNamed(context, business);
-                      },
-                      child: const Text('Ok'),
-                    ),
-                  ],
-                );
-              });
-        } catch (e) {
-          loading = false;
-          notifyListeners();
-          showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return CupertinoAlertDialog(
-                  title: const Text('Failed'),
-                  content: const Text(something),
-                  actions: <Widget>[
-                    CupertinoDialogAction(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: const Text('Ok'),
-                    ),
-                  ],
-                );
-              });
-        }
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return CupertinoAlertDialog(
+                title: const Text('Faild'),
+                content: const Text(something),
+                actions: <Widget>[
+                  CupertinoDialogAction(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Ok'),
+                  ),
+                ],
+              );
+            });
       }
     }
-    List<String> statusList=['COMPLETED','PENDING','ON GOING','NOT STARTED'];
-    String selectedStatus="PENDING";
-    changeStatus(String sts){
-      selectedStatus=sts;
+  }
+
+  void delete(ProjectModel model, BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return CupertinoAlertDialog(
+            title: const Text('Delete'),
+            content: const Text('This will delete this Project'),
+            actions: <Widget>[
+              CupertinoDialogAction(
+                onPressed: () async {
+                  //action for delete
+                  var headers = {
+                    'Authorization': 'Token $token',
+                    'Content-Type': 'application/json'
+                  };
+                  var request = http.Request(
+                      'DELETE',
+                      Uri.parse(
+                          'https://$baseUrl/api/v1/projects/${model.id}/'));
+                  print(Uri.parse(
+                      'https://$baseUrl/api/v1/projects/${model.id}'));
+                  request.headers.addAll(headers);
+
+                  http.StreamedResponse response = await request.send();
+
+                  if (response.statusCode == 200) {
+                    print(await response.stream.bytesToString());
+                  } else {
+                    print(response.reasonPhrase);
+                  }
+
+                  productList.remove(model);
+                  notifyListeners();
+                  Navigator.pop(context);
+                },
+                child: const Text('delete'),
+              ),
+            ],
+          );
+        });
+  }
+
+  // CategoriesModel? selectedCategory;
+  //
+  // void setDropDownValue(CategoriesModel value) {
+  //   selectedCategory = value;
+  //   notifyListeners();
+  // }
+
+  // List<BusinessModel> selectedBussinessList = [];
+
+  // void setSelectedBussiness() {
+  //   if (selectedBussinessList.contains(selectedBusiness)) {
+  //     selectedBussinessList.remove(selectedBusiness);
+  //   }
+  //   selectedBussinessList.add(selectedBusiness!);
+  //   notifyListeners();
+  // }
+
+  ProjectModel? updateModel;
+  void updateNavigate(BuildContext context, ProjectModel model) {
+    update = true;
+    updateModel = model;
+    debugPrint(updateModel!.toJson().toString());
+    notifyListeners();
+    // Navigator.push(
+    //     context, MaterialPageRoute(builder: (_) => const Bussiness()));
+  }
+
+  void updateFun(BuildContext context, ProjectModel model) async {
+    loading = true;
+    notifyListeners();
+    if (token == "") {
+      await getToken();
+    }
+    var header = {
+      "Authorization": "Token $token",
+      HttpHeaders.contentTypeHeader: 'application/json'
+    };
+    var body = model.toJson();
+    print(body);
+    final uri = Uri.parse('https://$baseUrl/api/v1/projects/${model.id}/');
+    print(uri);
+    final response =
+        await http.put(uri, headers: header, body: jsonEncode(body));
+
+    if (response.statusCode == HttpStatus.ok) {
+      loading = false;
       notifyListeners();
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return CupertinoAlertDialog(
+              title: const Text('Updated'),
+              content: const Text('Project updated successfully'),
+              actions: <Widget>[
+                CupertinoDialogAction(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    loading = false;
+                    notifyListeners();
+                  },
+                  child: const Text('Ok'),
+                ),
+              ],
+            );
+          });
+    } else if (response.statusCode == HttpStatus.badRequest) {
+      loading = false;
+      notifyListeners();
+      Map<String, dynamic> data = json.decode(response.body);
+      try {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return CupertinoAlertDialog(
+                title: const Text('Failed'),
+                content: Text(data['error']),
+                actions: <Widget>[
+                  CupertinoDialogAction(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      // Navigator.pushReplacementNamed(context, business);
+                    },
+                    child: const Text('Ok'),
+                  ),
+                ],
+              );
+            });
+      } catch (e) {
+        loading = false;
+        notifyListeners();
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return CupertinoAlertDialog(
+                title: const Text('Failed'),
+                content: const Text(something),
+                actions: <Widget>[
+                  CupertinoDialogAction(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Ok'),
+                  ),
+                ],
+              );
+            });
+      }
+    }
+  }
+
+  List<String> statusList = ['COMPLETED', 'PENDING', 'ON GOING', 'NOT STARTED'];
+  String selectedStatus = "PENDING";
+  changeStatus(String sts) {
+    selectedStatus = sts;
+    notifyListeners();
+  }
+
+  double getTotal(IncomeModel model) {
+    double total = 0.0;
+    for (var element in model.paymentHistory) {
+      total = element.amount + total;
     }
 
+    return total;
   }
+}

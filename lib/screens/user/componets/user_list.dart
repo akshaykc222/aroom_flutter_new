@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:seed_sales/componets.dart';
 import 'package:seed_sales/constants.dart';
 import 'package:seed_sales/screens/Desingation/provider/desingation_provider.dart';
-import 'package:seed_sales/screens/dashbord/body.dart';
 import 'package:seed_sales/screens/user/body.dart';
 import 'package:seed_sales/screens/user/models/user_model.dart';
 import 'package:seed_sales/screens/user/provider/users_provider.dart';
@@ -40,27 +39,24 @@ class _UserListState extends State<UserList> {
       child: Scaffold(
         appBar: appBar("Users", [], context),
         resizeToAvoidBottomInset: false,
-        body: Container(
-          color: lightBlack,
-          child: Consumer<UserProviderNew>(builder: (context, snapshot, child) {
-            return snapshot.loading
-                ? const Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : GridView.builder(
-                    shrinkWrap: true,
-                    itemCount: snapshot.userList.length,
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        mainAxisSpacing: 5,
-                        crossAxisSpacing: 5,
-                        childAspectRatio:
-                            MediaQuery.of(context).size.width * 0.3 / 90),
-                    itemBuilder: (_, index) {
-                      return UserListTile(title: snapshot.userList[index]);
-                    });
-          }),
-        ),
+        body: Consumer<UserProviderNew>(builder: (context, snapshot, child) {
+          return snapshot.loading
+              ? const Center(
+                  child: CircularProgressIndicator(),
+                )
+              : GridView.builder(
+                  shrinkWrap: true,
+                  itemCount: snapshot.userList.length,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 5,
+                      crossAxisSpacing: 5,
+                      childAspectRatio:
+                          MediaQuery.of(context).size.width * 0.3 / 90),
+                  itemBuilder: (_, index) {
+                    return UserListTile(title: snapshot.userList[index]);
+                  });
+        }),
         bottomNavigationBar: const BottomAppBar(
           color: blackColor,
           child: SizedBox(
@@ -71,7 +67,6 @@ class _UserListState extends State<UserList> {
         floatingActionButton: FloatingActionButton(
           backgroundColor: lightBlack,
           onPressed: () {
-
             Navigator.push(context,
                 MaterialPageRoute(builder: (_) => const UserCreation()));
           },
@@ -150,8 +145,13 @@ class UserListTile extends StatelessWidget {
                       )),
                 ),
                 InkWell(
-                  onTap: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (_)=> UserCreation(model: title,)));
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => UserCreation(
+                                  model: title,
+                                )));
                   },
                   child: Container(
                     decoration: BoxDecoration(

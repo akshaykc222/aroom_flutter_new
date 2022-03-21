@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:seed_sales/componets.dart';
-import 'package:seed_sales/constants.dart';
 
 import 'componets/user_creation_form.dart';
 import 'models/user_model.dart';
@@ -16,16 +15,17 @@ class UserCreation extends StatelessWidget {
       extendBody: true,
       resizeToAvoidBottomInset: false,
       appBar: appBar("User Creation", [], context),
-      body: Container(
-        color: lightBlack,
-        child: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            children:  [
-              model!=null?  UserCreationForm(model: model,):const UserCreationForm()
-            ],
-          ),
+      body: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            model != null
+                ? UserCreationForm(
+                    model: model,
+                  )
+                : const UserCreationForm()
+          ],
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

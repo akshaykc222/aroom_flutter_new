@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -7,18 +5,13 @@ import 'package:seed_sales/screens/Desingation/models/designation_model.dart';
 import 'package:seed_sales/screens/Desingation/provider/desingation_provider.dart';
 import 'package:seed_sales/screens/bussiness/models/bussinessmode.dart';
 import 'package:seed_sales/screens/bussiness/provider/business_provider.dart';
-import 'package:seed_sales/screens/roles/models/role_model.dart';
 import 'package:seed_sales/screens/roles/models/user_role_model.dart';
-import 'package:seed_sales/screens/user/models/role_models.dart';
 import 'package:seed_sales/screens/user/models/user_model.dart';
 import 'package:seed_sales/screens/user/provider/users_provider.dart';
-import 'package:uuid/uuid.dart';
 
 import '../../../componets.dart';
 import '../../../constants.dart';
-import '../../login/model/login_model.dart';
 import '../../roles/provider/role_provider.dart';
-import 'add_company.dart';
 
 class UserCreationForm extends StatefulWidget {
   final UserModel? model;
@@ -37,14 +30,12 @@ class _UserCreationFormState extends State<UserCreationForm> {
   final formKey = GlobalKey<FormState>();
   @override
   void initState() {
-
-    if(widget.model!=null){
-      nameController.text=widget.model!.name!;
-      mailController.text=widget.model!.email!;
-      phoneController.text=widget.model!.phone!;
-      passwordController.text=widget.model!.password!;
-      confirmPassController.text=widget.model!.password!;
-
+    if (widget.model != null) {
+      nameController.text = widget.model!.name!;
+      mailController.text = widget.model!.email!;
+      phoneController.text = widget.model!.phone!;
+      passwordController.text = widget.model!.password!;
+      confirmPassController.text = widget.model!.password!;
     }
     super.initState();
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
@@ -61,10 +52,10 @@ class _UserCreationFormState extends State<UserCreationForm> {
       Provider.of<DesignationProvider>(context, listen: false)
           .getBusinessList(context);
       Provider.of<UserProviderNew>(context, listen: false).clearList();
-    if(widget.model!=null){
-      Provider.of<DesignationProvider>(context, listen: false)
-          .setDropDownValueForUpdate(widget.model!.designation.id!);
-    }
+      if (widget.model != null) {
+        Provider.of<DesignationProvider>(context, listen: false)
+            .setDropDownValueForUpdate(widget.model!.designation!.id!);
+      }
     });
   }
 
@@ -85,21 +76,22 @@ class _UserCreationFormState extends State<UserCreationForm> {
         },
         controller: controller,
         keyboardType: keyboard,
-        style: const TextStyle(color: textColor),
+        style: const TextStyle(color: Colors.black),
         decoration: InputDecoration(
             labelText: label,
             labelStyle: const TextStyle(
-              color: whiteColor,
+              color: Colors.black,
               fontSize: 13,
             ),
             floatingLabelBehavior: FloatingLabelBehavior.auto,
             hintText: hint,
-            hintStyle: const TextStyle(color: textColor),
+            hintStyle: const TextStyle(color: Colors.black),
             filled: true,
             enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.red.shade500, width: 1)),
+                borderSide:
+                    BorderSide(color: Colors.grey.shade500, width: 0.5)),
             focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey.shade500, width: 1)),
+                borderSide: BorderSide(color: Colors.red.shade500, width: 0.5)),
             disabledBorder: const UnderlineInputBorder(
                 borderSide: BorderSide(color: Colors.white30)),
             border: const UnderlineInputBorder(
@@ -110,26 +102,26 @@ class _UserCreationFormState extends State<UserCreationForm> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.vertical,
-      child: Form(
-        key: formKey,
+    return Form(
+      key: formKey,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
         child: Column(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 25),
-              child:
-              Consumer<DesignationProvider>(builder: (context, provider, child) {
+              child: Consumer<DesignationProvider>(
+                  builder: (context, provider, child) {
                 return DropdownButtonFormField(
                   value: provider.selectedBusiness,
                   icon: const Icon(Icons.keyboard_arrow_down),
-                  decoration: defaultDecoration(
-                      "Designation", "Select designation"),
+                  decoration:
+                      defaultDecoration("Designation", "Select designation"),
                   items: provider.businessList
                       .map((e) => DropdownMenuItem<DesingationModel>(
-                      value: e, child: Text(e.designation)))
+                          value: e, child: Text(e.designation)))
                       .toList(),
                   onChanged: (DesingationModel? value) {
                     setState(() {
@@ -192,30 +184,47 @@ class _UserCreationFormState extends State<UserCreationForm> {
               ],
             ),
             spacer(10),
-            const AddCompany(),
+            // const AddCompany(),
             InkWell(onTap: () {
               if (formKey.currentState!.validate()) {
-                print("selected designation=${Provider.of<DesignationProvider>(context,listen: false).selectedBusiness}");
-                if(widget.model==null&&Provider.of<DesignationProvider>(context,listen: false).selectedBusiness!=null){
+                print(
+                    "selected designation=${Provider.of<DesignationProvider>(context, listen: false).selectedBusiness}");
+                if (widget.model == null &&
+                    Provider.of<DesignationProvider>(context, listen: false)
+                            .selectedBusiness !=
+                        null) {
                   UserModel model = UserModel(
-                      id: widget.model!=null?widget.model!.id!:null,
+                      id: widget.model != null ? widget.model!.id! : null,
                       name: nameController.text,
                       email: mailController.text,
                       phone: phoneController.text,
                       password: passwordController.text,
-                      designation: Provider.of<DesignationProvider>(context,listen: false).selectedBusiness==null && widget.model!=null?widget.model!.designation: Provider.of<DesignationProvider>(context,listen: false).selectedBusiness!,
-                      roleList: Provider.of<UserProviderNew>(context, listen: false).roleList
-                  );
+                      designation: Provider.of<DesignationProvider>(context,
+                                          listen: false)
+                                      .selectedBusiness ==
+                                  null &&
+                              widget.model != null
+                          ? widget.model!.designation
+                          : Provider.of<DesignationProvider>(context,
+                                  listen: false)
+                              .selectedBusiness!,
+                      roleList:
+                          Provider.of<UserProviderNew>(context, listen: false)
+                              .roleList);
 
                   Provider.of<UserProviderNew>(context, listen: false)
-                      .roleList
-                      .isNotEmpty
-                      ? widget.model==null? Provider.of<UserProviderNew>(context, listen: false)
-                      .addUser(model, context):Provider.of<UserProviderNew>(context, listen: false).updateBusiness(context, model)
+                          .roleList
+                          .isNotEmpty
+                      ? widget.model == null
+                          ? Provider.of<UserProviderNew>(context, listen: false)
+                              .addUser(model, context)
+                          : Provider.of<UserProviderNew>(context, listen: false)
+                              .updateBusiness(context, model)
                       : ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Add company access')));
-                }else{
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('please select designation')));
+                          const SnackBar(content: Text('Add company access')));
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text('please select designation')));
                 }
               }
             }, child:
@@ -249,21 +258,21 @@ Widget emailField(String label, String hint, TextInputType keyboard,
       },
       controller: controller,
       keyboardType: keyboard,
-      style: const TextStyle(color: textColor),
+      style: const TextStyle(color: Colors.black),
       decoration: InputDecoration(
           labelText: label,
           labelStyle: const TextStyle(
-            color: whiteColor,
+            color: Colors.black,
             fontSize: 13,
           ),
           floatingLabelBehavior: FloatingLabelBehavior.auto,
           hintText: hint,
-          hintStyle: const TextStyle(color: textColor),
+          hintStyle: const TextStyle(color: Colors.black),
           filled: true,
           enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.red.shade500, width: 1)),
+              borderSide: BorderSide(color: Colors.grey.shade500, width: 0.5)),
           focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.grey.shade500, width: 1)),
+              borderSide: BorderSide(color: Colors.red.shade500, width: 0.5)),
           disabledBorder: const UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.white30)),
           border: const UnderlineInputBorder(
@@ -289,21 +298,21 @@ Widget passwordField(String label, String hint, TextInputType keyboard,
       obscuringCharacter: '*',
       controller: controller,
       keyboardType: keyboard,
-      style: const TextStyle(color: textColor),
+      style: const TextStyle(color: Colors.black),
       decoration: InputDecoration(
           labelText: label,
           labelStyle: const TextStyle(
-            color: whiteColor,
+            color: Colors.black,
             fontSize: 13,
           ),
           floatingLabelBehavior: FloatingLabelBehavior.auto,
           hintText: hint,
-          hintStyle: const TextStyle(color: textColor),
+          hintStyle: const TextStyle(color: Colors.black),
           filled: true,
           enabledBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.red.shade500, width: 1)),
+              borderSide: BorderSide(color: Colors.grey.shade500, width: 0.5)),
           focusedBorder: UnderlineInputBorder(
-              borderSide: BorderSide(color: Colors.grey.shade500, width: 1)),
+              borderSide: BorderSide(color: Colors.red.shade500, width: 0.5)),
           disabledBorder: const UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.white30)),
           border: const UnderlineInputBorder(
@@ -388,12 +397,6 @@ class _SelectBussinesState extends State<SelectBussines> {
                 UserRoleModel roleModel =
                     Provider.of<RoleProviderNew>(context, listen: false)
                         .selectedDropdownvalue!;
-                UserRolesFromLogin model = UserRolesFromLogin(
-                    role: roleModel,
-                    business: businessModel,
-                    );
-                Provider.of<UserProviderNew>(context, listen: false)
-                    .addToRoleList(model, context);
 
                 Navigator.pop(context);
               },
